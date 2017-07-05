@@ -1,0 +1,11 @@
+<game>
+    <name>ns2_siege+</name>
+    <description>The two teams will spawn on their side of the map with a LOCKED door(s) in middle (front door). The ready phase is a time of truce. It allows teams to tech up, build defenses and prepare for fight.
+Each team will have equal time to build their Resource Towers/defenses and tech upgrades. 
+After a set time (designated by the mapper) the alarm will sound, as the front door(s) open, allowing combat.
+After a second designated time, a second door will open (siege door). The door allows marines to reach a room giving ARC firing range on the hives.
+
+Winning conditions are same as NS2, kill all Hives or CC's. Also most of the gameplay after first set of door(s) opens.
+
+Basically it's up to the aliens to go offensive and takeover the marine base before siege room opens. It's beautiful because both sides gets res, meaning full upgrades for both sides.</description>
+</game>
