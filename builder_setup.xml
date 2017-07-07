@@ -1,0 +1,454 @@
+<setup>
+
+	<name>Spark Engine</name>
+
+	<options>
+		<option name="src_dir"  description="Source Directory"    type="path"/>
+		<option name="dst_dir"  description="Output Directory"    type="path" source="HKEY_CURRENT_USER\Software\Spark Engine\Game Asset Directory"/>
+		<option name="temp_dir" description="Temporary Directory"  type="path" source="TEMP"/>
+	</options>
+	
+	<rules>
+		
+		<rule>
+			<match>${src_dir}\mapsrc\skyboxes{{\*}?\*}.cinematic</match>
+			<output_file>${dst_dir}\maps\skyboxes%1.cinematic</output_file>
+			<command>copy "${src_dir}\mapsrc\skyboxes%1.cinematic" "${dst_dir}\maps\skyboxes%1.cinematic"</command>
+		</rule>
+		
+		<rule>
+			<match>${src_dir}\mapsrc{{\*}?\*}.cinematic</match>
+			<output_file>${dst_dir}\maps%1.cinematic</output_file>
+			<command>copy "${src_dir}\mapsrc%1.cinematic" "${dst_dir}\maps%1.cinematic"</command>
+		</rule>
+		
+		<rule> <!-- css files -->
+			<match>${src_dir}\lua\menu\{{*\}?*}.css</match>
+			<output_file>${dst_dir}\lua\menu\%1.css</output_file>
+			<command>copy "${src_dir}\lua\menu\%1.css" "${dst_dir}\lua\menu\%1.css"</command>
+		</rule>
+		
+		<rule> <!-- fnt files -->
+			<match>${src_dir}\*.fnt</match>
+			<output_file>${dst_dir}\%1.fnt</output_file>
+			<command>copy "${src_dir}\%1.fnt" "${dst_dir}\%1.fnt"</command>
+		</rule>	 
+
+		<rule> <!-- render_setup files -->
+			<match>${src_dir}\*.render_setup</match>
+			<output_file>${dst_dir}\%1.render_setup</output_file>
+			<command>copy "${src_dir}\%1.render_setup" "${dst_dir}\%1.render_setup"</command>
+		</rule>	 
+		
+		<rule> <!-- shader_template files -->
+			<match>${src_dir}\*.shader_template</match>
+			<output_file>${dst_dir}\%1.shader_template</output_file>
+			<command>copy "${src_dir}\%1.shader_template" "${dst_dir}\%1.shader_template"</command>
+		</rule>	 
+		
+		<rule> <!-- Material normal maps in PSD format -->
+			<match>${src_dir}\materialsrc\{{*\}?*}_normal.psd</match>
+			<output_file>${dst_dir}\materials\%1_normal.dds</output_file>
+			<command>"${builder_dir}\utils\nvcompress" -normal -bc1 "${src_dir}\materialsrc\%1_normal.psd" "${dst_dir}\materials\%1_normal.dds"</command>
+		</rule>		
+		
+		<rule> <!-- Material textures in PSD format -->
+			<match>${src_dir}\materialsrc\{{*\}?*}_uncompressed.psd</match>
+			<output_file>${dst_dir}\materials\%1.dds</output_file>
+			<command>"${builder_dir}\utils\nvcompress" -rgb "${src_dir}\materialsrc\%1_uncompressed.psd" "${dst_dir}\materials\%1.dds"</command>
+		</rule>		
+		
+		<rule> <!-- Material textures in PSD format (has alpha channel) -->
+			<match>${src_dir}\materialsrc\{{*\}?*}.psd</match>
+			<output_file>${dst_dir}\materials\%1.dds</output_file>
+			<command>"${builder_dir}\utils\nvcompress" -bc3 "${src_dir}\materialsrc\%1.psd" "${dst_dir}\materials\%1.dds"</command>
+		</rule>
+
+		<rule> <!-- Model specular maps in PSD format (has alpha channel) -->
+			<match>${src_dir}\modelsrc\{{*\}?*}_spec.psd</match>
+			<output_file>${dst_dir}\models\%1_spec.dds</output_file>
+			<command>"${builder_dir}\utils\nvcompress" -bc3 "${src_dir}\modelsrc\%1_spec.psd" "${dst_dir}\models\%1_spec.dds"</command>
+		</rule>		
+		
+		<rule> <!-- Model normal maps in PSD format -->
+			<match>${src_dir}\modelsrc\{{*\}?*}_normal.psd</match>
+			<output_file>${dst_dir}\models\%1_normal.dds</output_file>
+			<command>"${builder_dir}\utils\nvcompress" -normal -bc1 "${src_dir}\modelsrc\%1_normal.psd" "${dst_dir}\models\%1_normal.dds"</command>
+		</rule>		
+		
+		<rule> <!-- Model textures in PSD format -->
+			<match>${src_dir}\modelsrc\{{*\}?*}.psd</match>
+			<output_file>${dst_dir}\models\%1.dds</output_file>
+			<command>"${builder_dir}\utils\nvcompress"-bc1 "${src_dir}\modelsrc\%1.psd" "${dst_dir}\models\%1.dds"</command>
+		</rule>		
+		
+		<rule> <!-- Effect textures in PSD format -->
+			<match>${src_dir}\cinematics\{{*\}?*}.psd</match>
+			<output_file>${dst_dir}\cinematics\%1.dds</output_file>
+			<command>"${builder_dir}\utils\nvcompress" -bc3 "${src_dir}\cinematics\%1.psd" "${dst_dir}\cinematics\%1.dds"</command>
+		</rule>
+		
+		<!-- TGA Files -->
+		<rule> <!-- Material normal maps in TGA format -->
+			<match>${src_dir}\materialsrc\{{*\}?*}_normal.tga</match>
+			<output_file>${dst_dir}\materials\%1_normal.dds</output_file>
+			<command>"${builder_dir}\utils\nvcompress" -normal -bc1 "${src_dir}\materialsrc\%1_normal.tga" "${dst_dir}\materials\%1_normal.dds"</command>
+		</rule>		
+		
+		<rule> <!-- Material textures in TGA format -->
+			<match>${src_dir}\materialsrc\{{*\}?*}_uncompressed.tga</match>
+			<output_file>${dst_dir}\materials\%1.dds</output_file>
+			<command>"${builder_dir}\utils\nvcompress" -bc3 "${src_dir}\materialsrc\%1_uncompressed.tga" "${dst_dir}\materials\%1.dds"</command>
+		</rule>		
+		
+		<rule> <!-- Material textures in TGA format (has alpha channel) -->
+			<match>${src_dir}\materialsrc\{{*\}?*}.tga</match>
+			<output_file>${dst_dir}\materials\%1.dds</output_file>
+			<command>"${builder_dir}\utils\nvcompress" -bc3 "${src_dir}\materialsrc\%1.tga" "${dst_dir}\materials\%1.dds"</command>
+		</rule>
+		
+		<rule> <!-- Model specular maps in TGA format (has alpha channel) -->
+			<match>${src_dir}\modelsrc\{{*\}?*}_spec.tga</match>
+			<output_file>${dst_dir}\models\%1_spec.dds</output_file>
+			<command>"${builder_dir}\utils\nvcompress" -bc3 "${src_dir}\modelsrc\%1_spec.tga" "${dst_dir}\models\%1_spec.dds"</command>
+		</rule>		
+		
+		<rule> <!-- Model normal maps in TGA format -->
+			<match>${src_dir}\modelsrc\{{*\}?*}_normal.tga</match>
+			<output_file>${dst_dir}\models\%1_normal.dds</output_file>
+			<command>"${builder_dir}\utils\nvcompress" -normal -bc1 "${src_dir}\modelsrc\%1_normal.tga" "${dst_dir}\models\%1_normal.dds"</command>
+		</rule>		
+		
+		<rule> <!-- Model textures in TGA format -->
+			<match>${src_dir}\modelsrc\{{*\}?*}.tga</match>
+			<output_file>${dst_dir}\models\%1.dds</output_file>
+			<command>"${builder_dir}\utils\nvcompress" -bc1 "${src_dir}\modelsrc\%1.tga" "${dst_dir}\models\%1.dds"</command>
+		</rule>		
+		
+		<rule> <!-- Effect textures in TGA format -->
+			<match>${src_dir}\cinematics\{{*\}?*}.tga</match>
+			<output_file>${dst_dir}\cinematics\%1.dds</output_file>
+			<command>"${builder_dir}\utils\nvcompress" -bc3 "${src_dir}\cinematics\%1.tga" "${dst_dir}\cinematics\%1.dds"</command>
+		</rule>
+		
+		<rule> <!-- .material files for models -->
+			<match>${src_dir}\modelsrc\{{*\}?*}.material</match>
+			<output_file>${dst_dir}\models\%1.material</output_file>
+			<command>copy "${src_dir}\modelsrc\%1.material" "${dst_dir}\models\%1.material"</command>
+		</rule>	
+
+		<rule> <!-- .material files for materials -->
+			<match>${src_dir}\materialsrc\{{*\}?*}.material</match>
+			<output_file>${dst_dir}\materials\%1.material</output_file>
+			<command>copy "${src_dir}\materialsrc\%1.material" "${dst_dir}\materials\%1.material"</command>
+		</rule>
+		
+		<rule> <!-- .surface_shader files for models -->
+			<match>${src_dir}\modelsrc\{{*\}?*}.surface_shader</match>
+			<output_file>${dst_dir}\models\%1.surface_shader</output_file>
+			<command>copy "${src_dir}\modelsrc\%1.surface_shader" "${dst_dir}\models\%1.surface_shader"</command>
+		</rule>	
+
+		<rule> <!-- .surface_shader files for materials -->
+			<match>${src_dir}\materialsrc\{{*\}?*}.surface_shader</match>
+			<output_file>${dst_dir}\materials\%1.surface_shader</output_file>
+			<command>copy "${src_dir}\materialsrc\%1.surface_shader" "${dst_dir}\materials\%1.surface_shader"</command>
+		</rule>
+		
+		<rule> <!-- .surface_shader files for cinematics -->
+			<match>${src_dir}\cinematics\{{*\}?*}.surface_shader</match>
+			<output_file>${dst_dir}\cinematics\%1.surface_shader</output_file>
+			<command>copy "${src_dir}\cinematics\%1.surface_shader" "${dst_dir}\cinematics\%1.surface_shader"</command>
+		</rule>	
+
+		<rule> <!-- UI textures in PSD format -->
+			<match>${src_dir}\ui{{\*}?\*}.psd</match>
+			<output_file>${dst_dir}\ui%1.dds</output_file>
+			<command>"${builder_dir}\utils\nvcompress" -rgb "${src_dir}\ui%1.psd" "${dst_dir}\ui%1.dds"</command>
+		</rule>
+		
+		<rule> <!-- UI textures in TGA format -->
+			<match>${src_dir}\ui{{\*}?\*}.tga</match>
+			<output_file>${dst_dir}\ui%1.dds</output_file>
+			<command>"${builder_dir}\utils\nvcompress" -rgb "${src_dir}\ui%1.tga" "${dst_dir}\ui%1.dds"</command>
+		</rule>
+		
+		<rule> <!-- model_compile files -->
+			<match>${src_dir}\modelsrc\{{*\}?*}.model_compile</match>
+			<output_file>${dst_dir}\models\%1.model</output_file>
+			<input_file>
+				<execute>"${builder_dir}\CompileModel" -dependencies "${src_dir}\modelsrc\%1.model_compile"</execute>
+			</input_file>	
+			<command>"${builder_dir}\CompileModel" -material_src "${src_dir}\modelsrc" -material_dst "models" "${src_dir}\modelsrc\%1.model_compile" "${dst_dir}\models\%1.model"</command>
+		</rule>
+    
+		<rule> <!-- model copy function -->
+			<match>${src_dir}\modelsrc\{{*\}?*}.model</match>
+			<output_file>${dst_dir}\models\%1.model</output_file>
+			<command> copy "${src_dir}\modelsrc\%1.model" "${dst_dir}\models\%1.model" </command>
+		</rule>
+		
+		<rule> <!-- .animation_graph files -->
+			<match>${src_dir}\modelsrc\{{*\}?*}.animation_graph</match>
+			<output_file>${dst_dir}\models\%1.animation_graph</output_file>
+			<command>copy "${src_dir}\modelsrc\%1.animation_graph" "${dst_dir}\models\%1.animation_graph"</command>
+		</rule>	    
+		
+		<rule> <!-- Cinematic level files -->
+			<match>${src_dir}\cinematics{{\*}?\*}.level</match>
+			<output_file>${dst_dir}\cinematics%1.level</output_file>
+			<command>copy "${src_dir}\cinematics\%1.level" "${dst_dir}\cinematics\%1.level"</command>
+		</rule>	 		
+		
+		<rule> <!-- Cinematic files -->
+			<match>${src_dir}\cinematics{{\*}?\*}.cinematic</match>
+			<output_file>${dst_dir}\cinematics%1.cinematic</output_file>
+			<command>copy "${src_dir}\cinematics\%1.cinematic" "${dst_dir}\cinematics\%1.cinematic"</command>
+		</rule>	 
+        
+		<!-- Sound files -->
+		<rule> 
+			<match>${src_dir}\sound\{{*\}?*}.fdp</match>
+			<output_file>${dst_dir}\sound\%1.fdp</output_file>
+			<command>copy "${src_dir}\sound\%1.fdp" "${dst_dir}\sound\%1.fdp"</command>
+		</rule>	 	
+		<rule> 
+			<match>${src_dir}\sound\{{*\}?*}.fev</match>
+			<output_file>${dst_dir}\sound\%1.fev</output_file>
+			<command>copy "${src_dir}\sound\%1.fev" "${dst_dir}\sound\%1.fev"</command>
+		</rule>	 	
+		<rule> 
+			<match>${src_dir}\sound\{{*\}?*}.soundinfo</match>
+			<output_file>${dst_dir}\sound\%1.soundinfo</output_file>
+			<command>copy "${src_dir}\sound\%1.soundinfo" "${dst_dir}\sound\%1.soundinfo"</command>
+		</rule>	 	
+		<rule> 
+			<match>${src_dir}\sound\{{*\}?*}.fsb</match>
+			<output_file>${dst_dir}\sound\%1.fsb</output_file>
+			<command>copy "${src_dir}\sound\%1.fsb" "${dst_dir}\sound\%1.fsb"</command>
+		</rule>	 		
+        
+		<rule>
+			<match>${src_dir}\soundsrc\*.wav</match>
+			<output_file>${dst_dir}\sound\%1.wav</output_file>
+			<command>copy "${src_dir}\soundsrc\%1.wav" "${dst_dir}\sound\%1.wav"</command>
+			<command>"${builder_dir}\SoundInfo.exe" "${src_dir}\soundsrc\%1.wav" "${dst_dir}\sound\%1.soundinfo"</command>
+		</rule>
+		
+		<rule>
+			<match>${src_dir}\soundsrc\*.ogg</match>
+			<output_file>${dst_dir}\sound\%1.ogg</output_file>
+			<command>copy "${src_dir}\soundsrc\%1.ogg" "${dst_dir}\sound\%1.ogg"</command>
+		</rule>
+		
+		<rule>
+			<match>${src_dir}\soundsrc\*.mp3</match>
+			<output_file>${dst_dir}\sound\%1.mp3</output_file>
+			<command>copy "${src_dir}\soundsrc\%1.mp3" "${dst_dir}\sound\%1.mp3"</command>
+		</rule>
+		
+		<rule> <!-- FMOD Designer files -->
+			<match>${src_dir}\soundsrc\{{*\}?*}.fdp</match>
+			<output_file>${dst_dir}\sound\%1.fev</output_file>
+			<output_file>${dst_dir}\sound\%1.fev.seq</output_file>
+			<output_file>${dst_dir}\sound\%1_bank.fsb</output_file>
+			<output_file>${dst_dir}\sound\%1_bank.fsb.seq</output_file>
+			<output_file>${dst_dir}\sound\%1.soundinfo</output_file>
+			<!-- Remove the output files to keep FMOD from getting confused -->
+			<command>erase "${dst_dir}\sound\%1.fev"</command>
+			<command>erase "${dst_dir}\sound\%1.fev.seq"</command>
+			<command>erase "${dst_dir}\sound\%1_bank.fsb"</command>
+			<command>erase "${dst_dir}\sound\%1_bank.fsb.seq"</command>
+			<command>"${builder_dir}\utils\fmod_designercl.exe" -pc -r "${src_dir}\soundsrc\%1.fdp" -b "${dst_dir}\sound"</command>
+			<command>"${builder_dir}\SoundInfo.exe" "${dst_dir}\sound\%1.fev" "${dst_dir}\sound"</command>
+		</rule>
+		
+		<rule> <!-- FMOD Designer files -->
+			<match>${src_dir}\soundsrc\{{*\}?*}.soundinfo</match>
+			<output_file>${dst_dir}\sound\%1.soundinfo</output_file>
+			<command>copy "${src_dir}\soundsrc\%1.soundinfo" "${dst_dir}\sound\%1.soundinfo"</command>
+		</rule>
+		
+		<rule> <!-- Script files -->
+			<match>${src_dir}\lua\{{*\}?*}.lua</match>
+			<output_file>${dst_dir}\lua\%1.lua</output_file>
+			<command>copy "${src_dir}\lua\%1.lua" "${dst_dir}\lua\%1.lua"</command>
+		</rule>	 		
+		
+		<rule> <!-- Entry files -->
+			<match>${src_dir}\lua\entry\*.entry</match>
+			<output_file>${dst_dir}\lua\entry\%1.entry</output_file>
+			<command>copy "${src_dir}\lua\entry\%1.entry" "${dst_dir}\lua\entry\%1.entry"</command>
+		</rule>	 
+		
+		<rule> <!-- Editor setup file -->
+			<match>${src_dir}\editor_setup.xml</match>
+			<output_file>${dst_dir}\editor_setup.xml</output_file>
+			<command>copy "${src_dir}\editor_setup.xml" "${dst_dir}\editor_setup.xml"</command>
+		</rule>	 
+		
+		<rule> <!-- Game setup file -->
+			<match>${src_dir}\game_setup.xml</match>
+			<output_file>${dst_dir}\game_setup.xml</output_file>
+			<command>copy "${src_dir}\game_setup.xml" "${dst_dir}\game_setup.xml"</command>
+		</rule>	 		
+
+		<rule> <!--Icon, etc. files -->
+			<match>${src_dir}\*.png</match>
+			<output_file>${dst_dir}\%1.png</output_file>
+			<command>copy "${src_dir}\%1.png" "${dst_dir}\%1.png"</command>
+		</rule>
+		
+		<rule> <!-- Screen Effect files -->
+			<match>${src_dir}\*.screenfx</match>
+			<output_file>${dst_dir}\%1.screenfx</output_file>
+			<command>copy "${src_dir}\%1.screenfx" "${dst_dir}\%1.screenfx"</command>
+		</rule>
+		
+		<rule> <!-- Effect Phyton files -->
+			<match>${src_dir}\materialsrc\{{*\}?*}.py</match>
+			<output_file>${dst_dir}\materials\%1.py</output_file>
+			<command>copy "${src_dir}\materialsrc\%1.py" "${dst_dir}\materials\%1.py"</command>
+		</rule>
+		
+		<rule> <!-- Gamestrings files -->
+			<match>${src_dir}\gamestrings\*.txt</match>
+			<output_file>${dst_dir}\gamestrings\%1.txt</output_file>
+			<command>copy "${src_dir}\gamestrings\%1.txt" "${dst_dir}\gamestrings\%1.txt"</command>
+		</rule>
+		
+		<rule> <!-- Shader Template files -->
+			<match>${src_dir}\*.shader_template</match>
+			<output_file>${dst_dir}\%1.shader_template</output_file>
+			<command>copy "${src_dir}\%1.shader_template" "${dst_dir}\%1.shader_template"</command>
+		</rule>
+		
+		<rule> <!-- Surface Shader files -->
+			<match>${src_dir}\*.surface_shader</match>
+			<output_file>${dst_dir}\%1.surface_shader</output_file>
+			<command>copy "${src_dir}\%1.surface_shader" "${dst_dir}\%1.surface_shader"</command>
+		</rule>
+		
+		<rule> <!-- .material files -->
+			<match>${src_dir}\{{*\}?*}.material</match>
+			<output_file>${dst_dir}\%1.material</output_file>
+			<command>copy "${src_dir}\%1.material" "${dst_dir}\%1.material"</command>
+		</rule>	
+		
+		<rule> <!-- Model textures in PSD format -->
+			<match>${src_dir}\{{*\}?*}.psd</match>
+			<output_file>${dst_dir}\%1.dds</output_file>
+			<command>"${builder_dir}\utils\nvcompress" -bc1 "${src_dir}\%1.psd" "${dst_dir}\%1.dds"</command>
+		</rule>		
+		
+		<rule> <!-- model_compile files -->
+			<match>${src_dir}\{{*\}?*}.model_compile</match>
+			<output_file>${dst_dir}\%1.model</output_file>
+			<input_file>
+				<execute>"${builder_dir}\CompileModel" -dependencies "${src_dir}\%1.model_compile"</execute>
+			</input_file>
+			<command>"${builder_dir}\CompileModel" -material_src "${src_dir}\" "${src_dir}\%1.model_compile" "${dst_dir}\%1.model"</command>
+		</rule>		
+
+		<rule> <!-- JPG files -->
+			<match>${src_dir}\{{*\}?*}.jpg</match>
+			<output_file>${dst_dir}\%1.jpg</output_file>
+			<command>copy "${src_dir}\%1.jpg" "${dst_dir}\%1.jpg"</command>
+		</rule>		
+		
+		<rule> <!-- webm files -->
+			<match>${src_dir}\{{*\}?*}.webm</match>
+			<output_file>${dst_dir}\%1.webm</output_file>
+			<command>copy "${src_dir}\%1.webm" "${dst_dir}\%1.webm"</command>
+		</rule>
+		
+		<rule> <!-- Levels-Cinematic files -->
+			<match>${src_dir}\cinematics{{\*}?\*}.cinematic</match>
+			<output_file>${dst_dir}\cinematics%1.cinematic</output_file>
+			<command>copy "${src_dir}\cinematics\%1.cinematic" "${dst_dir}\cinematics\%1.cinematic"</command>
+		</rule>
+		
+		<!-- FIXME This is crap. Seasonal files shouldn't have thier own special directory. Should use existing cin/mat/sdr/folders -->
+		<rule> <!-- Seasonal cinematics -->
+			<match>${src_dir}\seasonal{{\*}?\*}.cinematic</match>
+			<output_file>${dst_dir}\cinematics%1.cinematic</output_file>
+			<command>copy "${src_dir}\cinematics\%1.cinematic" "${dst_dir}\cinematics\%1.cinematic"</command>
+		</rule>
+		
+		<rule> <!-- seasonal model_compile files -->
+			<match>${src_dir}\seasonal\{{*\}?*}.model_compile</match>
+			<output_file>${dst_dir}\seasonal\%1.model</output_file>
+			<input_file>
+				<execute>"${builder_dir}\CompileModel" -dependencies "${src_dir}\seasonal\%1.model_compile"</execute>
+			</input_file>
+			<command>"${builder_dir}\CompileModel" -material_src "${src_dir}\seasonal" -material_dst "seasonal" "${src_dir}\seasonal\%1.model_compile" "${dst_dir}\seasonal\%1.model"</command>
+		</rule>
+		
+		<rule> <!-- seasonal .surface_shader files for materials -->
+			<match>${src_dir}\seasonal\{{*\}?*}.surface_shader</match>
+			<output_file>${dst_dir}\seasonal\%1.surface_shader</output_file>
+			<command>copy "${src_dir}\seasonal\%1.surface_shader" "${dst_dir}\seasonal\%1.surface_shader"</command>
+		</rule>
+		
+		<rule> <!-- seasonal Effect textures in PSD format -->
+			<match>${src_dir}\seasonal\{{*\}?*}.psd</match>
+			<output_file>${dst_dir}\seasonal\%1.dds</output_file>
+			<command>"${builder_dir}\utils\nvcompress" -bc3 "${src_dir}\seasonal\%1.psd" "${dst_dir}\seasonal\%1.dds"</command>
+		</rule>
+		
+		
+		<!--  Pass 1  -->
+		
+		<!-- Rule for CDT builder and/or overviews stored in VCS -->
+		<rule pass="1">
+			<match>${src_dir}\mapsrc\overviews{{\*}?\*}.tga</match>
+			<output_file>${dst_dir}\maps\overviews%1.tga</output_file>
+			<command>copy "${src_dir}\mapsrc\overviews%1.tga" "${dst_dir}\maps\overviews%1.tga"</command>
+		</rule>
+		
+		<rule pass="1">
+			<match>${src_dir}\mapsrc\overviews{{\*}?\*}.hmp</match>
+			<output_file>${dst_dir}\maps\overviews%1.hmp</output_file>
+			<command>copy "${src_dir}\mapsrc\overviews%1.hmp" "${dst_dir}\maps\overviews%1.hmp"</command>
+		</rule>
+		
+		<!-- Levels should be handled almost last, due to overview's dependency on models and shaders -->
+		<!-- Note: overview.exe utility automatically adds \maps\overviews\ to the ${dst_dir} when it runs -->
+		<rule pass="1">
+			<match>${src_dir}\mapsrc{{\*}?\*}.level</match>
+			<output_file>${dst_dir}\maps%1.level</output_file>
+			<output_file>${dst_dir}\maps\overviews%1.tga</output_file>
+			<output_file>${dst_dir}\maps\overviews%1.hmp</output_file>
+			<command>"${builder_dir}\Overview" "${src_dir}\mapsrc%1.level" "${dst_dir}"</command>
+			<command>if not exist "${dst_dir}\maps" mkdir "${dst_dir}\maps"</command>
+			<command>copy "${src_dir}\mapsrc%1.level" "${dst_dir}\maps%1.level"</command>
+			<command>if not exist "${dst_dir}\fastload\maps" mkdir "${dst_dir}\fastload\maps"</command>
+			<command>if exist "%APPDATA%\Natural Selection 2\cache\maps%1.level-client.tile_cache_grid" copy "%APPDATA%\Natural Selection 2\cache\maps%1.level-client.tile_cache_grid" "${dst_dir}\fastload\maps%1.level-client.tile_cache_grid"</command>
+			<command>if exist "%APPDATA%\Natural Selection 2\cache\maps%1.level-server.tile_cache_grid" copy "%APPDATA%\Natural Selection 2\cache\maps%1.level-server.tile_cache_grid" "${dst_dir}\fastload\maps%1.level-server.tile_cache_grid"</command>
+		</rule>
+
+		<rule pass="1"> 
+			<match>${src_dir}\cinematics\vfx_materials\vfx_*.material</match>
+			<output_file>${dst_dir}\cinematics\vfx_materials\vfx_%1.material.polygons</output_file>
+			<input_file>
+				<execute>"${builder_dir}\ParticleTrimmer" "${src_dir}\cinematics\vfx_materials\vfx_%1.material" "${dst_dir}\cinematics\vfx_materials\vfx_%1.material.polygons" -threshold 0 -asset_dir "${dst_dir}" -dependencies</execute>
+			</input_file>
+			<command>
+				<execute>"${builder_dir}\ParticleTrimmer" "${src_dir}\cinematics\vfx_materials\vfx_%1.material" "${dst_dir}\cinematics\vfx_materials\vfx_%1.material.polygons" -threshold 0 -asset_dir "${dst_dir}" </execute>
+			</command>
+		</rule>	
+
+		<rule pass="1"> 
+			<match>${src_dir}\materialsrc\effects\{{*\}?*}.material</match>
+			<output_file>${dst_dir}\materials\effects\%1.material.polygons</output_file>
+			<input_file>
+				<execute>"${builder_dir}\ParticleTrimmer" "${src_dir}\materialsrc\effects\%1.material" "${dst_dir}\materials\effects\%1.material.polygons" -threshold 0 -asset_dir "${dst_dir}" -dependencies</execute>
+			</input_file>
+			<command>
+				<execute>"${builder_dir}\ParticleTrimmer" "${src_dir}\materialsrc\effects\%1.material" "${dst_dir}\materials\effects\%1.material.polygons" -threshold 0 -asset_dir "${dst_dir}"</execute>
+			</command>
+		</rule>
+		
+	</rules>
+
+</setup>
