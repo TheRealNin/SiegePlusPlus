@@ -15,6 +15,8 @@ function GUIDoorTimers:OnResolutionChanged(oldX, oldY, newX, newY)
 end
 
 function GUIDoorTimers:Initialize()
+
+    
     local backgroundSize = GUIScale(GUIDoorTimers.kBackgroundScale)
     
     self.background = GUIManager:CreateGraphicItem()
@@ -35,14 +37,21 @@ function GUIDoorTimers:Initialize()
     self.timers:SetColor(Color(1, 1, 1, 1))
     self.timers:SetText("TIMERS")
     self.background:AddChild(self.timers) 
+    
+    self:Update(0)
 end
 
 function GUIDoorTimers:Uninitialize()
-    GUI.DestroyItem(self.timers)
-    self.timers = nil
+
+    if self.timers then
+      GUI.DestroyItem(self.timers)
+      self.timers = nil
+    end
     
-    GUI.DestroyItem(self.background)
-    self.background = nil 
+    if self.background then
+      GUI.DestroyItem(self.background)
+      self.background = nil 
+    end
 end
 
 function GUIDoorTimers:SetIsVisible(visible)

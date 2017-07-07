@@ -4,4 +4,4 @@
 //
 
 decoda_name = "Client"
-Shared.Message('ns2siege+ ... beta06')
+--Shared.Message('ns2siege+ ... beta06')

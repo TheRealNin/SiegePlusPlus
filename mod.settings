@@ -1,8 +1,8 @@
 name        = "NinSiegePlus"
 source_dir  = "source"
 output_dir  = "output"
-description = [=[NinSiegePlus is just Siege+ fixed for the Mod Madness tournament
-
+description = [=[NinSiegePlus is just Siege+ fixed for the Mod Madness tournament
+
 ModID: 3441eca6]=]
 image       = "preview.jpg"
 tag_modtype = "Custom Game Mode"
