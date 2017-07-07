@@ -1,8 +1,10 @@
-name        = "NinSiegePlus"
+name        = "SiegePlusPlus"
 source_dir  = "source"
 output_dir  = "output"
-description = [=[NinSiegePlus is just Siege+ fixed for the Mod Madness tournament
-
+description = [=[A continuation of Siege+. 
+
+https://github.com/TheRealNin/SiegePlusPlus
+
 ModID: 3441eca6]=]
 image       = "preview.jpg"
 tag_modtype = "Custom Game Mode"
