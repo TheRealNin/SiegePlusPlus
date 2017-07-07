@@ -1,6 +1,8 @@
 <game>
-    <name>ns2_siege+</name>
-    <description>The two teams will spawn on their side of the map with a LOCKED door(s) in middle (front door). The ready phase is a time of truce. It allows teams to tech up, build defenses and prepare for fight.
+    <name>siege++</name>
+    <description>Siege++
+    
+    The two teams will spawn on their side of the map with a LOCKED door(s) in middle (front door). The ready phase is a time of truce. It allows teams to tech up, build defenses and prepare for fight.
 Each team will have equal time to build their Resource Towers/defenses and tech upgrades. 
 After a set time (designated by the mapper) the alarm will sound, as the front door(s) open, allowing combat.
 After a second designated time, a second door will open (siege door). The door allows marines to reach a room giving ARC firing range on the hives.
