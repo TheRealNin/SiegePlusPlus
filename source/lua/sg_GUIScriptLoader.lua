@@ -1,7 +1,7 @@
-//
-//	ns2siege+ Custom Game Mode
-//	ZycaR (c) 2016
-//
+--
+--	ns2siege+ Custom Game Mode
+--	ZycaR (c) 2016
+--
 
 if Client then
     local function LoadGuiElement(luafile)
@@ -12,6 +12,6 @@ if Client then
     end
 
 
-    // load and run custom gui elements as singletons
+    -- load and run custom gui elements as singletons
     LoadGuiElement("sg_gui/GUIDoorTimers")
 end
