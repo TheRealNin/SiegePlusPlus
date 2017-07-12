@@ -1,7 +1,7 @@
-//
-//	ns2siege+ Custom Game Mode
-//	ZycaR (c) 2016
-//
+--
+--	ns2siege+ Custom Game Mode
+--	ZycaR (c) 2016
+--
 Script.Load("lua/ScriptActor.lua")
 Script.Load("lua/Mixins/SignalListenerMixin.lua")
 
@@ -11,7 +11,7 @@ FuncMaid.kMapName = "ns2siege_funcmaid"
 FuncMaid.kUpdateTime = 0.5
 local networkVars = { }
 
-// copied from death_trigger, which should do it right
+-- copied from death_trigger, which should do it right
 local function KillEntity(self, entity)
     -- don't kill powerpoint
     if entity:isa("PowerPoint") then return end
@@ -29,7 +29,7 @@ local function FuncMaidTriggered(self)
         for _, entity in ientitylist(Shared.GetEntitiesWithClassname("Cyst")) do
             if self:GetIsPointInside(entity:GetOrigin()) then
                 Shared.Message('Maid\'s cleaning duty for cyst .. ' .. entity:GetId())
-                KillEntity(self, entity) // do cleanup
+                KillEntity(self, entity) -- do cleanup
             end
         end
     end
@@ -43,7 +43,7 @@ local function KillAllInMaid(self)
     for _, entity in ipairs(hitEntities) do
         if self:GetIsPointInside(entity:GetOrigin()) then
             Shared.Message('Maid\'s killing duty for .. ' .. entity:GetClassName())
-            KillEntity(self, entity) // do cleanup
+            KillEntity(self, entity) -- do cleanup
         end
     end
 end
@@ -59,11 +59,11 @@ function FuncMaid:OnInitialized()
     Trigger.OnInitialized(self)
     self:SetTriggerCollisionEnabled(true)
     self:SetUpdates(false)
-    
+
     self:RegisterSignalListener(function()
         FuncMaidTriggered(self)
     end, kSignalFuncMaid)
-    
+
     self:RegisterSignalListener(function()
         KillAllInMaid(self)
     end, self.listenMessage)
