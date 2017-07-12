@@ -1,7 +1,7 @@
-//
-//	ns2siege+ Custom Game Mode
-//	ZycaR (c) 2016
-//
+--
+--	ns2siege+ Custom Game Mode
+--	ZycaR (c) 2016
+--
 
 if Server then
     Script.Load("lua/Server.lua")

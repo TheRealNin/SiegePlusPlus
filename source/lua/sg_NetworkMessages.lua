@@ -1,7 +1,7 @@
-//
-//	ns2siege+ Custom Game Mode
-//	ZycaR (c) 2016
-//
+--
+--	ns2siege+ Custom Game Mode
+--	ZycaR (c) 2016
+--
 
 kSiegeMessageTypes = enum({
     'FrontDoorOpened',
@@ -9,7 +9,7 @@ kSiegeMessageTypes = enum({
     'SuddenDeathActivated'
 })
 
-// Network Message transfer stuff
+-- Network Message transfer stuff
 local kSiegeMessageMessage = {
     type = "enum kSiegeMessageTypes"
 }
@@ -23,7 +23,7 @@ if Server then
                 Server.SendNetworkMessage(player, "SiegeMessage", { type = messageType }, true)
             end
             team:ForEachPlayer(SendToPlayer)
-        end        
+        end
     end
 end
 
@@ -38,13 +38,13 @@ if Client then
     function OnCommandSiegeMessage(message)
         local text = kSiegeMessages[message.type]
         local player = Client.GetLocalPlayer()
-        
+
         if text and player and HasMixin(player, "TeamMessage") then
             text = Locale.ResolveString(text)
             assert(type(text) == "string")
-            
+
             player:SetTeamMessage(string.UTF8Upper(text))
-        end        
+        end
     end
 
     Client.HookNetworkMessage("SiegeMessage", OnCommandSiegeMessage)
