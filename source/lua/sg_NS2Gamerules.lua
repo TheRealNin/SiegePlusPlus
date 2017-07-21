@@ -30,6 +30,8 @@ if Server then
             local ns2gamerules = GetGamerules()
             ns2gamerules:OpenFuncDoors(kFrontDoorType, NS2Gamerules.kFrontDoorSound)
             ns2gamerules.frontDoors = true
+            ns2gamerules.FrontDoorTime = 0
+            GetGameInfoEntity().FrontDoorTime = 0
             Shared.Message("= Front Doors =")
         end
     end
@@ -40,6 +42,8 @@ if Server then
             local ns2gamerules = GetGamerules()
             ns2gamerules:OpenFuncDoors(kSiegeDoorType, NS2Gamerules.kSiegeDoorSound)
             ns2gamerules.siegeDoors = true
+            ns2gamerules.SiegeDoorTime = 1
+            GetGameInfoEntity().SiegeDoorTime = 1
             Shared.Message("= Siege Doors =")
         end
     end
@@ -50,6 +54,8 @@ if Server then
             local ns2gamerules = GetGamerules()
             ns2gamerules:ActivateSuddenDeath()
             ns2gamerules.suddenDeath = true
+            ns2gamerules.SuddenDeathTime = 2
+            GetGameInfoEntity().SuddenDeathTime = 2
             Shared.Message("= Sudden Death =")
         end
     end

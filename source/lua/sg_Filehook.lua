@@ -25,3 +25,5 @@ ModLoader.SetupFileHook( "lua/GUIWorldText.lua", "lua/sg_GUIScriptLoader.lua" , 
 -- tech tree changes according doors
 ModLoader.SetupFileHook( "lua/Balance.lua", "lua/sg_Balance.lua" , "post" )
 ModLoader.SetupFileHook( "lua/TechTree_Server.lua", "lua/sg_TechTree_Server.lua" , "post" )
+
+ModLoader.SetupFileHook( "lua/TechData.lua", "lua/sg_TechData.lua" , "post" )
