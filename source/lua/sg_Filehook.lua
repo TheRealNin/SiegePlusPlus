@@ -6,6 +6,9 @@
 ModLoader.SetupFileHook( "lua/GameInfo.lua", "lua/sg_GameInfo.lua" , "post" )
 ModLoader.SetupFileHook( "lua/NS2Gamerules.lua", "lua/sg_NS2Gamerules.lua" , "post" )
 
+-- Spider Gorge
+ModLoader.SetupFileHook( "lua/Gorge.lua", "lua/sg_Gorge.lua", "post")
+
 -- Truce mode untill front/siege doors are closed
 ModLoader.SetupFileHook( "lua/DamageMixin.lua", "lua/sg_DamageMixin.lua" , "post" )
 
