@@ -4,5 +4,6 @@
 --
 
 -- increase contamination cooldown significanlty ... because siege is about turtling!
-kContaminationCooldown = 15
+kContaminationCooldown = 60
+kContaminationLifeSpan = 60
 kContaminationBileSpewCount = 1

@@ -30,9 +30,9 @@ end
 if Client then
 
     local kSiegeMessages = {
-        [kSiegeMessageTypes.FrontDoorOpened] = "Front Door Now Open",
-        [kSiegeMessageTypes.SiegeDoorOpened] = "Siege Door Now Open",
-        [kSiegeMessageTypes.SuddenDeathActivated] = "Sudden Death Mode Activated"
+        [kSiegeMessageTypes.FrontDoorOpened] = "Front Door now open!",
+        [kSiegeMessageTypes.SiegeDoorOpened] = "Siege Door now open!",
+        [kSiegeMessageTypes.SuddenDeathActivated] = "Sudden Death mode activated!"
     }
 
     function OnCommandSiegeMessage(message)

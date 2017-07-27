@@ -32,6 +32,12 @@ local function FuncMaidTriggered(self)
                 KillEntity(self, entity) -- do cleanup
             end
         end
+        for _, entity in ientitylist(Shared.GetEntitiesWithClassname("Contamination")) do
+            if self:GetIsPointInside(entity:GetOrigin()) then
+                Shared.Message('Maid\'s cleaning duty for contamination .. ' .. entity:GetId())
+                KillEntity(self, entity) -- do cleanup
+            end
+        end
     end
 end
 
