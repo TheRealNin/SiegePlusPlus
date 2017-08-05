@@ -1,7 +1,18 @@
 
-function GetIsSuddenDeathActivated()
+local safeCommandStuctureRadius = 25
+
+function CanCommandStructureBeBuilt(techId, origin, normal, commander)
 	local front, siege, suddendeath, gameLength = GetGameInfoEntity():GetSiegeTimes()
-  return suddendeath > 0
+    
+    if front > 0 then
+    
+        local cs = GetEntitiesForTeamWithinRange("CommandStructure", GetEnemyTeamNumber(commander:GetTeamNumber()), origin, safeCommandStuctureRadius)
+        if cs and #cs > 0 then
+            return false
+        end
+    end
+    
+    return suddendeath > 0
 end
 
 local oldBuildTechData = BuildTechData
@@ -15,8 +26,8 @@ function BuildTechData()
         if(currentField == kTechId.CommandStation) or (currentField == kTechId.Hive) then
           
           -- patch the tech data to prevent building if sudden death
-            record[kTechDataBuildRequiresMethod] = GetIsSuddenDeathActivated
-            record[kTechDataBuildMethodFailedMessage] = "Can't build command structures! Sudden death is active!"
+            record[kTechDataBuildRequiresMethod] = CanCommandStructureBeBuilt
+            record[kTechDataBuildMethodFailedMessage] = "Can't build command structure!"
         end
 
     end
