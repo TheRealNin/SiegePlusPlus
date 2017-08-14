@@ -9,7 +9,13 @@ local ns2_GetPathingInfo = ObstacleMixin._GetPathingInfo
 function ObstacleMixin:_GetPathingInfo()
 
     if self:GetMapName() ~= kFuncDoorMapName or not self._modelCoords then
-        return ns2_GetPathingInfo(self)
+        
+        -- by default, the game tries to make a 1000 unit tall thing. It's stupid.
+        local position = self:GetOrigin() + Vector(0, -3, 0)  
+        local radius = LookupTechData(self:GetTechId(), kTechDataObstacleRadius, 1.0)
+        local height = 8
+        
+        return position, radius, height
     end
 
     assert(self.GetObstaclePathingInfo)

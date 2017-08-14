@@ -185,13 +185,13 @@ end
 
 function FuncDoor:GetObstaclePathingInfo()
     if Server then
-        local centerpoint = self.waypoint.obstacle.origin + Vector(0, -100, 0)
+        local centerpoint = self.waypoint.obstacle.origin + Vector(0, -3, 0)
         local radius = Clamp(self.waypoint.obstacle.radius, 1.5, 24.0)
-        return centerpoint, radius, 1000.0
+        return centerpoint, radius, 5
     else
-        local centerpoint = self:GetModelOrigin() + Vector(0, -100, 0)
+        local centerpoint = self:GetModelOrigin() + Vector(0, -3, 0)
         local radius = Clamp(self:GetScaledModelExtents():GetLengthXZ(), 1.5, 24.0)
-        return centerpoint, radius, 1000.0
+        return centerpoint, radius, 5
     end
 end
 
