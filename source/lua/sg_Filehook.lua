@@ -28,3 +28,12 @@ ModLoader.SetupFileHook( "lua/Balance.lua", "lua/sg_Balance.lua" , "post" )
 ModLoader.SetupFileHook( "lua/TechTree_Server.lua", "lua/sg_TechTree_Server.lua" , "post" )
 
 ModLoader.SetupFileHook( "lua/TechData.lua", "lua/sg_TechData.lua" , "post" )
+
+-- enable commander bots
+ModLoader.SetupFileHook( "lua/VotingAddCommanderBots.lua", "lua/sg_VotingAddCommanderBots.lua" , "post" )
+ModLoader.SetupFileHook( "lua/bots/BotUtils.lua", "lua/bots/sg_BotUtils.lua" , "post" )
+ModLoader.SetupFileHook( "lua/bots/CommonActions.lua", "lua/bots/sg_CommonActions.lua" , "post" )
+
+
+ModLoader.SetupFileHook( "lua/bots/AlienCommanderBrain_Data.lua", "lua/bots/sg_AlienCommanderBrain_Data.lua" , "replace" )
+ModLoader.SetupFileHook( "lua/bots/MarineCommanderBrain_Data.lua", "lua/bots/sg_MarineCommanderBrain_Data.lua" , "replace" )
