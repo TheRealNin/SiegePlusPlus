@@ -16,6 +16,20 @@ local function CreateBuildNearStationAction( techId, className, numToBuild, weig
             "CommandStation",
             kStationBuildDist )
 end
+
+local function CreateBuildNearStationActionLate( techId, className, numToBuild, weightIfNotEnough , lateTime)
+
+    return CreateBuildStructureActionLate(
+            techId, className,
+            {
+            {-1.0, weightIfNotEnough},
+            {numToBuild-1, weightIfNotEnough},
+            {numToBuild, 0.0}
+            },
+            "CommandStation",
+            kStationBuildDist,
+            lateTime)
+end
 local function CreateBuildNearEachPower( techId, className, numToBuild, weightIfNotEnough )
 
     return CreateBuildStructureActionForEach(
@@ -31,14 +45,14 @@ end
 
 kMarineComBrainActions =
 {
-    CreateBuildNearStationAction( kTechId.Armory         , "Armory"         , 1 , 4 ),
-    CreateBuildNearStationAction( kTechId.Observatory    , "Observatory"    , 1 , 2) ,
-    CreateBuildNearStationAction( kTechId.PhaseGate      , "PhaseGate"      , 1 , 1) ,
-    CreateBuildNearStationAction( kTechId.ArmsLab        , "ArmsLab"        , 1 , 3.1) ,
-    CreateBuildNearStationAction( kTechId.ArmsLab        , "ArmsLab"        , 2 , 0.1) ,
+    CreateBuildNearStationAction( kTechId.ArmsLab        , "ArmsLab"        , 1 , 9.1) ,
+    CreateBuildNearStationAction( kTechId.ArmsLab        , "ArmsLab"        , 2 , 1.0) ,
     CreateBuildNearStationAction( kTechId.PrototypeLab   , "PrototypeLab"   , 1 , 3) ,
-    CreateBuildNearStationAction( kTechId.RoboticsFactory, "RoboticsFactory", 1 , 0.1) ,
-    CreateBuildNearStationAction( kTechId.CommandStation , "CommandStation" , 3 , 0.2) ,
+    CreateBuildNearStationActionLate( kTechId.Observatory    , "Observatory"    , 1 , 1.0, 3) ,
+    CreateBuildNearStationActionLate( kTechId.Armory         , "Armory"         , 1 , 3.0 , 1.5),
+    CreateBuildNearStationActionLate( kTechId.PhaseGate      , "PhaseGate"      , 1 , 1, 4) ,
+    CreateBuildNearStationActionLate( kTechId.RoboticsFactory, "RoboticsFactory", 1 , 0.1, 5) ,
+    CreateBuildNearStationActionLate( kTechId.CommandStation , "CommandStation" , 3 , 0.2, 5) ,
     
     
     CreateBuildNearEachPower( kTechId.Armory         , "Armory"         , 1 , 0.2 ),
@@ -47,15 +61,15 @@ kMarineComBrainActions =
     CreateBuildNearEachPower( kTechId.Observatory    , "Observatory"    , 1 , 0.1 ),
 
     -- Upgrades from structures
-    CreateUpgradeStructureAction( kTechId.ShotgunTech           , 2.0 ) ,
-    CreateUpgradeStructureAction( kTechId.JetpackTech           , 2.9 ) ,
     CreateUpgradeStructureAction( kTechId.ExosuitTech           , 3.1 ) ,
-    CreateUpgradeStructureAction( kTechId.MinesTech             , 0.2 ) ,
     CreateUpgradeStructureAction( kTechId.AdvancedArmoryUpgrade , 3.5 ) ,
-    CreateUpgradeStructureAction( kTechId.HeavyMachineGunTech   , 0.5 ) ,
-    CreateUpgradeStructureAction( kTechId.GrenadeTech             , 0.3 ) ,
+    CreateUpgradeStructureActionLate( kTechId.ShotgunTech           , 2.0 , nil,  4) ,
+    CreateUpgradeStructureActionLate( kTechId.JetpackTech           , 2.9 , nil,  4) ,
+    CreateUpgradeStructureActionLate( kTechId.MinesTech             , 0.2 , nil,  4) ,
+    CreateUpgradeStructureActionLate( kTechId.HeavyMachineGunTech   , 0.5 , nil,  4) ,
+    CreateUpgradeStructureActionLate( kTechId.GrenadeTech           , 0.3 , nil,  4) ,
 
-    CreateUpgradeStructureAction( kTechId.PhaseTech , 2.0 ),
+    CreateUpgradeStructureAction( kTechId.PhaseTech , 2.0),
 
     CreateUpgradeStructureAction( kTechId.Weapons1 , 5.0 ) ,
     CreateUpgradeStructureAction( kTechId.Weapons2 , 4.0 ) ,
