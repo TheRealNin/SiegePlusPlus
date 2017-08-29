@@ -53,6 +53,7 @@ kMarineComBrainActions =
     CreateBuildNearStationActionLate( kTechId.PhaseGate      , "PhaseGate"      , 1 , 1, 4) ,
     CreateBuildNearStationActionLate( kTechId.RoboticsFactory, "RoboticsFactory", 1 , 0.1, 5) ,
     CreateBuildNearStationActionLate( kTechId.CommandStation , "CommandStation" , 3 , 0.2, 5) ,
+    CreateBuildNearStationActionLate( kTechId.CommandStation , "InfantryPortal" , 4 , 0.2, 5) ,
     
     
     CreateBuildNearEachPower( kTechId.Armory         , "Armory"         , 1 , 0.2 ),
@@ -68,6 +69,7 @@ kMarineComBrainActions =
     CreateUpgradeStructureActionLate( kTechId.MinesTech             , 0.2 , nil,  4) ,
     CreateUpgradeStructureActionLate( kTechId.HeavyMachineGunTech   , 0.5 , nil,  4) ,
     CreateUpgradeStructureActionLate( kTechId.GrenadeTech           , 0.3 , nil,  4) ,
+    
 
     CreateUpgradeStructureAction( kTechId.PhaseTech , 2.0),
 
@@ -78,9 +80,9 @@ kMarineComBrainActions =
     CreateUpgradeStructureAction( kTechId.Armor2   , 4.0 ) ,
     CreateUpgradeStructureAction( kTechId.Armor3   , 2.5 ) ,
     
-    CreateUpgradeStructureAction( kTechId.PowerSurgeTech , 0.1 ),
-    CreateUpgradeStructureAction( kTechId.CatPackTech    , 0.1 ),
-    CreateUpgradeStructureAction( kTechId.NanoShieldTech , 0.1 ),
+    CreateUpgradeStructureAction( kTechId.PowerSurgeTech , 0.2 ),
+    CreateUpgradeStructureAction( kTechId.CatPackTech    , 0.2 ),
+    CreateUpgradeStructureAction( kTechId.NanoShieldTech , 0.2 ),
 
     function(bot, brain)
 
@@ -113,7 +115,7 @@ kMarineComBrainActions =
                     {
                         {0, 10.0},
                         {4, 8.0},
-                        {6, 3.0},
+                        {6, 5.0},
                         {8, 2.0},
                         })
 

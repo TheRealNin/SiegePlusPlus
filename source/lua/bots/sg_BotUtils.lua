@@ -12,6 +12,7 @@ function ResourcePointsWithPathToCC(list, ccs)
             if pointToUse then
             
                 local hasPathToPoint = Pathing.GetPathPoints(origin, rp:GetOrigin(), pathPoints)
+                local dist = GetPointDistance(path)
                 
                 if hasPathToPoint then
                     if not rp:GetAttached() then

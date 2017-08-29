@@ -5,7 +5,7 @@ local kHiveBuildDist = 15.0
 
 local function CreateBuildNearHiveAction( techId, className, numToBuild, weightIfNotEnough )
 
-    return CreateBuildStructureAction(
+    return CreateBuildStructureActionLate(
             techId, className,
             {
             {-1.0, weightIfNotEnough},
@@ -13,12 +13,13 @@ local function CreateBuildNearHiveAction( techId, className, numToBuild, weightI
             {numToBuild, 0.0}
             },
             "Hive",
-            kHiveBuildDist )
+            kHiveBuildDist,
+            3            )
 end
 
 local function CreateBuildNearHiveActionWithReqHiveNum( techId, className, numToBuild, weightIfNotEnough, reqHiveNum )
 
-    local createBuildStructure = CreateBuildStructureAction(
+    local createBuildStructure = CreateBuildStructureActionLate(
         techId, className,
         {
             {-1.0, weightIfNotEnough},
@@ -26,7 +27,8 @@ local function CreateBuildNearHiveActionWithReqHiveNum( techId, className, numTo
             {numToBuild, 0.0}
         },
         "Hive",
-        kHiveBuildDist )
+        kHiveBuildDist ,
+        4.5)
 
     return function(bot, brain)
         local action = createBuildStructure(bot, brain)
@@ -59,36 +61,36 @@ end
 
 kAlienComBrainActions =
 {
-    -- By randomizing weights, each bot has its own "personality"
-    CreateUpgradeStructureActionAfterTime( kTechId.UpgradeToCragHive        , 3.0, nil, 1 ) ,
-    CreateUpgradeStructureActionAfterTime( kTechId.UpgradeToShiftHive       , 3.0, nil, 1 ) ,
-    CreateUpgradeStructureActionAfterTime( kTechId.UpgradeToShadeHive       , 3.0, nil, 1 ) ,
+    CreateUpgradeStructureActionAfterTime( kTechId.UpgradeToCragHive        , 1.0, nil, 2 ) ,
+    CreateUpgradeStructureActionAfterTime( kTechId.UpgradeToShiftHive       , 2.0, nil, 2 ) ,
+    CreateUpgradeStructureActionAfterTime( kTechId.UpgradeToShadeHive       , 1.1, nil, 2 ) ,
 
     CreateUpgradeStructureAction( kTechId.BileBomb       , 3.5 ) ,
     CreateUpgradeStructureAction( kTechId.Leap       , 3.0 ) ,
 
     CreateUpgradeStructureAction( kTechId.Charge       , 3.0 ),
     CreateUpgradeStructureAction( kTechId.MetabolizeEnergy       , 2.0 ) ,
-    CreateUpgradeStructureAction( kTechId.Umbra       , 2.0 ) ,
+    CreateUpgradeStructureAction( kTechId.Umbra       , 1.0 ) ,
     CreateUpgradeStructureAction( kTechId.BoneShield       , 3.0 ) ,
 
-    CreateUpgradeStructureAction( kTechId.MetabolizeHealth       , 1.0 ) ,
+    CreateUpgradeStructureAction( kTechId.MetabolizeHealth       , 2.0 ) ,
     CreateUpgradeStructureAction( kTechId.Stomp       , 3.0 ) ,
 
     CreateUpgradeStructureAction( kTechId.Xenocide       , 1.0 ) ,
     CreateUpgradeStructureAction( kTechId.Spores       , 1.0 ) ,
     CreateUpgradeStructureAction( kTechId.Stab       , 1.0 ) ,
+    CreateUpgradeStructureActionAfterTime( kTechId.OnosEgg       , 0.5, nil, 5 ) ,
 
     CreateUpgradeStructureAction( kTechId.WebTech       , 0.5 ) ,
 
-    CreateBuildNearHiveActionWithReqHiveNum( kTechId.Shift , "Shift" , 2 , 0.2, 3 ),
+    CreateBuildNearHiveActionWithReqHiveNum( kTechId.Shift , "Shift" , 2 , 0.2, 1 ),
     CreateBuildNearHiveActionWithReqHiveNum( kTechId.Crag  , "Crag"  , 2 , 0.1, 3 ),
     CreateBuildNearHiveActionWithReqHiveNum( kTechId.Shade , "Shade" , 2 , 0.1, 3 ),
-    CreateBuildNearHiveActionWithReqHiveNum( kTechId.Whip  , "Whip"  , 6 , 0.1, 3 ),
+    CreateBuildNearHiveActionWithReqHiveNum( kTechId.Whip  , "Whip"  , 2 , 0.1, 3 ),
 
-    CreateBuildNearHiveAction( kTechId.Veil  , "Veil"  , 1 , 2.0),
-    CreateBuildNearHiveAction( kTechId.Shell , "Shell" , 1 , 2.0),
-    CreateBuildNearHiveAction( kTechId.Spur  , "Spur"  , 1 , 2.0),
+    CreateBuildNearHiveAction( kTechId.Veil  , "Veil"  , 1 , 0.1),
+    CreateBuildNearHiveAction( kTechId.Shell , "Shell" , 1 , 0.1),
+    CreateBuildNearHiveAction( kTechId.Spur  , "Spur"  , 1 , 0.1),
 
     CreateBuildNearHiveActionWithReqHiveNum( kTechId.Veil  , "Veil"  , 3 , 2.0, 1 ),
     CreateBuildNearHiveActionWithReqHiveNum( kTechId.Shell , "Shell" , 3 , 2.0, 1 ),
@@ -332,8 +334,8 @@ kAlienComBrainActions =
         local weight = 0.0
         local drifters = sdb:Get("drifters")
 
-        if sdb:Get("numDrifters") < sdb:Get("numHives") then
-            weight = 10
+        if sdb:Get("numDrifters") < 1 then
+            weight = 2
         end
 
         local function IsBeingGrown(self, target)
@@ -407,7 +409,7 @@ kAlienComBrainActions =
         local targetTP
 
         if sdb:Get("numHarvesters") >= sdb:Get("numHarvsForHive") 
-            or sdb:Get("overdueForHive") or com:GetTeam():GetTeamResources() >= 60 then
+            or sdb:Get("overdueForHive") or com:GetTeam():GetTeamResources() >= 100 then
 
             -- Find a hive slot!
             targetTP = sdb:Get("techPointToTake")

@@ -77,7 +77,8 @@ function CreateBuildStructureActionLate( techId, className, numExistingToWeightL
             perform = function(move)
 
                 -- ultra hack!
-                if (sdb:Get("gameMinutes") < lateTime) then return end
+                local team = com:GetTeam()
+                if (sdb:Get("gameMinutes") < lateTime and team:GetTeamResources() < 150) then return end
                 
                 -- Pick a random host for now
                 local host = hosts[ math.random(#hosts) ]
@@ -123,7 +124,8 @@ function CreateUpgradeStructureActionLate( techId, weightIfCanDo, existingTechId
             perform = function(move)
 
                 -- ultra hack!
-                if (sdb:Get("gameMinutes") < lateTime) then return end
+                local team = com:GetTeam()
+                if (sdb:Get("gameMinutes") < lateTime and team:GetTeamResources() < 150) then return end
                 
                 if structures == nil then return end
                 
