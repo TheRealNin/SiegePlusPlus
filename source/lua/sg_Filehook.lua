@@ -29,6 +29,9 @@ ModLoader.SetupFileHook( "lua/TechTree_Server.lua", "lua/sg_TechTree_Server.lua"
 
 ModLoader.SetupFileHook( "lua/TechData.lua", "lua/sg_TechData.lua" , "post" )
 
+-- fix hive healing (yes, it's a replace.... the file is garbo)
+ModLoader.SetupFileHook( "lua/Hive_Server.lua", "lua/sg_Hive_Server.lua" , "replace" )
+
 -- enable commander bots
 ModLoader.SetupFileHook( "lua/VotingAddCommanderBots.lua", "lua/sg_VotingAddCommanderBots.lua" , "post" )
 ModLoader.SetupFileHook( "lua/bots/BotUtils.lua", "lua/bots/sg_BotUtils.lua" , "post" )
