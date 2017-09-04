@@ -23,6 +23,10 @@ ModLoader.SetupFileHook( "lua/CommAbilities/Alien/Contamination.lua", "lua/sg_Co
 -- Hook custom gui elements
 ModLoader.SetupFileHook( "lua/GUIWorldText.lua", "lua/sg_GUIScriptLoader.lua" , "post" )
 
+ModLoader.SetupFileHook( "lua/GUIInsight_TopBar.lua", "lua/sg_GUIInsight_TopBar.lua" , "replace" )
+ModLoader.SetupFileHook( "lua/GUIFirstPersonSpectate.lua", "lua/sg_GUIFirstPersonSpectate.lua" , "replace" )
+
+
 -- tech tree changes according doors
 ModLoader.SetupFileHook( "lua/Balance.lua", "lua/sg_Balance.lua" , "post" )
 ModLoader.SetupFileHook( "lua/TechTree_Server.lua", "lua/sg_TechTree_Server.lua" , "post" )
