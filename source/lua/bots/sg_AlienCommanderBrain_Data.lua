@@ -14,7 +14,7 @@ local function CreateBuildNearHiveAction( techId, className, numToBuild, weightI
             },
             "Hive",
             kHiveBuildDist,
-            3            )
+            4            )
 end
 
 local function CreateBuildNearHiveActionWithReqHiveNum( techId, className, numToBuild, weightIfNotEnough, reqHiveNum )
@@ -34,7 +34,6 @@ local function CreateBuildNearHiveActionWithReqHiveNum( techId, className, numTo
         local action = createBuildStructure(bot, brain)
 
         local sdb = brain:GetSenses()
-
         if sdb:Get("numHives") < reqHiveNum then
             action.weight = 0.0
         end
@@ -50,7 +49,7 @@ local function CreateUpgradeStructureActionAfterTime( techId, weightIfCanDo, exi
         local action =  createUpgradeStructure(bot, brain)
 
         local sdb = brain:GetSenses()
-
+        
         if sdb:Get("gameMinutes") < time then
             action.weight = 0.0
         end
@@ -59,11 +58,42 @@ local function CreateUpgradeStructureActionAfterTime( techId, weightIfCanDo, exi
     end
 end
 
+local function UpgradeHiveAfterTime(techId, weightIfCanDo, time)
+    local createUpgradeStructure = CreateUpgradeStructureAction(techId, weightIfCanDo, nil)
+    return function (bot, brain)
+        local action =  createUpgradeStructure(bot, brain)
+
+        local sdb = brain:GetSenses()
+
+        
+        if sdb:Get("gameMinutes") < time then
+            action.weight = 0.0
+        end
+        
+        local perform = action.perform
+        action.perform = function(move)
+            
+            if not brain.hiveMemories then
+                brain.hiveMemories = {}
+            end
+            
+            if brain.hiveMemories[techId] then
+                return
+            else
+                brain.hiveMemories[techId] = true
+            end
+                
+            return perform(move)
+        end
+        return action
+    end
+end
+
 kAlienComBrainActions =
 {
-    CreateUpgradeStructureActionAfterTime( kTechId.UpgradeToCragHive        , 1.0, nil, 2 ) ,
-    CreateUpgradeStructureActionAfterTime( kTechId.UpgradeToShiftHive       , 2.0, nil, 2 ) ,
-    CreateUpgradeStructureActionAfterTime( kTechId.UpgradeToShadeHive       , 1.1, nil, 2 ) ,
+    UpgradeHiveAfterTime( kTechId.UpgradeToCragHive        , 0.8, 5 ) ,
+    UpgradeHiveAfterTime( kTechId.UpgradeToShiftHive       , 1.0, 2 ) ,
+    UpgradeHiveAfterTime( kTechId.UpgradeToShadeHive       , 0.9, 4 ) ,
 
     CreateUpgradeStructureAction( kTechId.BileBomb       , 3.5 ) ,
     CreateUpgradeStructureAction( kTechId.Leap       , 3.0 ) ,
@@ -282,7 +312,7 @@ kAlienComBrainActions =
                 local cystPoints = GetCystPoints(cystPos)
 
                 if not cystPoints then return end
-                local cost = math.max(0, (#cystPoints - 1) * kCystCost)
+                local cost = math.max(0, (#cystPoints - 1) * kCystCost) + 3 -- wiggle room
 
                 local team = com:GetTeam()
                 if cost <= team:GetTeamResources() and (team:GetTeamResources() > 42 or sdb:Get("gameMinutes") < 3) then

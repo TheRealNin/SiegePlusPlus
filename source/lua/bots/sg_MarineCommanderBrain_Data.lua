@@ -3,6 +3,7 @@ Script.Load("lua/bots/BrainSenses.lua")
 
 local kStationBuildDist = 20.0
 local kPowerPointDist = 30.0
+local kProtoDist = 5.0
 
 local function CreateBuildNearStationAction( techId, className, numToBuild, weightIfNotEnough )
 
@@ -43,6 +44,20 @@ local function CreateBuildNearEachPower( techId, className, numToBuild, weightIf
             kPowerPointDist )
 end
 
+local function CreateBuildNearEachProto( techId, className, numToBuild, weightIfNotEnough )
+
+    return CreateBuildStructureActionForEach(
+            techId, className,
+            {
+            {-1.0, weightIfNotEnough},
+            {numToBuild-1, weightIfNotEnough},
+            {numToBuild, 0.0}
+            },
+            "PrototypeLab",
+            kProtoDist )
+end
+
+
 kMarineComBrainActions =
 {
     CreateBuildNearStationAction( kTechId.ArmsLab        , "ArmsLab"        , 1 , 9.1) ,
@@ -52,8 +67,10 @@ kMarineComBrainActions =
     CreateBuildNearStationActionLate( kTechId.Armory         , "Armory"         , 1 , 3.0 , 1.5),
     CreateBuildNearStationActionLate( kTechId.PhaseGate      , "PhaseGate"      , 1 , 1, 4) ,
     CreateBuildNearStationActionLate( kTechId.RoboticsFactory, "RoboticsFactory", 1 , 0.1, 5) ,
-    CreateBuildNearStationActionLate( kTechId.CommandStation , "CommandStation" , 3 , 0.2, 5) ,
-    CreateBuildNearStationActionLate( kTechId.CommandStation , "InfantryPortal" , 4 , 0.2, 5) ,
+    CreateBuildNearStationActionLate( kTechId.InfantryPortal , "InfantryPortal" , 4 , 0.2, 5) ,
+    
+    -- todo: Fix this for maps with 2 tech points in marine start
+    --CreateBuildNearStationActionLate( kTechId.CommandStation , "CommandStation" , 3 , 0.2, 5) ,
     
     
     CreateBuildNearEachPower( kTechId.Armory         , "Armory"         , 1 , 0.2 ),
@@ -64,10 +81,10 @@ kMarineComBrainActions =
     -- Upgrades from structures
     CreateUpgradeStructureAction( kTechId.ExosuitTech           , 3.1 ) ,
     CreateUpgradeStructureAction( kTechId.AdvancedArmoryUpgrade , 3.5 ) ,
-    CreateUpgradeStructureActionLate( kTechId.ShotgunTech           , 2.0 , nil,  4) ,
+    CreateUpgradeStructureActionLate( kTechId.ShotgunTech           , 1.0 , nil,  4) ,
     CreateUpgradeStructureActionLate( kTechId.JetpackTech           , 2.9 , nil,  4) ,
     CreateUpgradeStructureActionLate( kTechId.MinesTech             , 0.2 , nil,  4) ,
-    CreateUpgradeStructureActionLate( kTechId.HeavyMachineGunTech   , 0.5 , nil,  4) ,
+    CreateUpgradeStructureActionLate( kTechId.HeavyMachineGunTech   , 1.1 , nil,  4) ,
     CreateUpgradeStructureActionLate( kTechId.GrenadeTech           , 0.3 , nil,  4) ,
     
 
@@ -80,10 +97,37 @@ kMarineComBrainActions =
     CreateUpgradeStructureAction( kTechId.Armor2   , 4.0 ) ,
     CreateUpgradeStructureAction( kTechId.Armor3   , 2.5 ) ,
     
-    CreateUpgradeStructureAction( kTechId.PowerSurgeTech , 0.2 ),
-    CreateUpgradeStructureAction( kTechId.CatPackTech    , 0.2 ),
-    CreateUpgradeStructureAction( kTechId.NanoShieldTech , 0.2 ),
+    -- for some reason the bot can't do this. I don't know why!
+    --CreateUpgradeStructureAction( kTechId.PowerSurgeTech , 0.2 ),
+    --CreateUpgradeStructureAction( kTechId.CatPackTech    , 0.2 ),
+    --CreateUpgradeStructureAction( kTechId.NanoShieldTech , 0.2 ),
 
+    function(bot, brain)
+
+        local name = "commandstation"
+        local com = bot:GetPlayer()
+        local sdb = brain:GetSenses()
+        local doables = sdb:Get("doableTechIds")
+        local weight = 0.0
+        local targetTP
+
+        -- Find a cc slot!
+        targetTP = sdb:Get("techPointToTake")
+
+        if targetTP then
+            weight = 2
+        end
+
+        return { name = name, weight = weight,
+            perform = function(move)
+                if (sdb:Get("gameMinutes") < 6.5) then
+                    return
+                end
+                if doables[kTechId.CommandStation] and targetTP then
+                    local sucess = brain:ExecuteTechId( com, kTechId.CommandStation, targetTP:GetOrigin(), com )
+                end
+            end}
+    end,
     function(bot, brain)
 
         local weight = 0
@@ -94,6 +138,49 @@ kMarineComBrainActions =
         end
 
         return CreateBuildNearStationAction( kTechId.InfantryPortal , "InfantryPortal" , 4 , weight )(bot, brain)
+    end,
+    
+    function(bot, brain)
+
+        local name = "dropjetpacks"
+        local com = bot:GetPlayer()
+        local sdb = brain:GetSenses()
+        local weight = 0
+        local team = bot:GetPlayer():GetTeam()
+        
+        local doables = sdb:Get("doableTechIds")
+        if doables[kTechId.DropJetpack] then
+            weight = 1.5
+        end
+        local jetpacks = GetEntitiesForTeam("Jetpack", kMarineTeamType)
+        if #jetpacks > 10 then 
+            weight = 0
+        end
+        
+        
+        return { name = name, weight = weight,
+            perform = function(move)
+                
+                --if (sdb:Get("gameMinutes") < 5) then
+                --    return
+                --end
+                local protoLabs = GetEntitiesForTeam("PrototypeLab", kMarineTeamType)
+                if #protoLabs <= 0 then return end
+                local proto = protoLabs[math.random(#protoLabs)]
+                if not proto:GetIsBuilt() or not proto:GetIsAlive() then
+                    return
+                end
+                
+                local jetpacks = GetEntitiesForTeam("Jetpack", kMarineTeamType)
+                if #jetpacks > 10 then return end
+                
+                local aroundPos = proto:GetOrigin()
+                
+                local targetPos = GetRandomSpawnForCapsule(0.4, 0.4, aroundPos, 0.01, kArmoryWeaponAttachRange * 0.5, EntityFilterAll(), nil)
+                if targetPos then
+                    local sucess = brain:ExecuteTechId(com, kTechId.DropJetpack, targetPos, com, proto:GetId())
+                end
+            end}
     end,
 
     function(bot, brain)
@@ -116,7 +203,8 @@ kMarineComBrainActions =
                         {0, 10.0},
                         {4, 8.0},
                         {6, 5.0},
-                        {8, 2.0},
+                        {8, 3.0},
+                        {16,1.0},
                         })
 
             end
@@ -228,6 +316,7 @@ kMarineComBrainActions =
                 end
             end}
     end,
+    
 
     function(bot, brain)
 
@@ -272,6 +361,15 @@ function CreateMarineComSenses()
     s:Add("numInfantryPortals", function(db)
         return GetNumEntitiesOfType("InfantryPortal", kMarineTeamType)
     end)
+    
+    s:Add("techPointToTake", function(db)
+        local tps = GetAvailableTechPoints()
+            local hives = db:Get("stations")
+            local dist, tp = GetMinTableEntry( tps, function(tp)
+                return GetMinPathDistToEntities( tp, hives )
+                end)
+            return tp
+            end)
 
     s:Add("resPointToTake", function(db)
             local rps = db:Get("availResPoints")

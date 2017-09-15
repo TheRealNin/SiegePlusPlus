@@ -13,8 +13,14 @@ function ResourcePointsWithPathToCC(list, ccs)
             
                 local hasPathToPoint = Pathing.GetPathPoints(origin, rp:GetOrigin(), pathPoints)
                 local dist = GetPointDistance(path)
+                local hasNearbyPlayer = false
+                for _, friend in ipairs( GetEntitiesForTeamWithinRange("Player", cc:GetTeamNumber(), rp:GetOrigin(), 5) ) do
+                    if friend:GetIsAlive() then
+                        hasNearbyPlayer = true
+                    end
+                end
                 
-                if hasPathToPoint then
+                if hasPathToPoint or hasNearbyPlayer then
                     if not rp:GetAttached() then
                         table.insert( rps, rp )
                     end
