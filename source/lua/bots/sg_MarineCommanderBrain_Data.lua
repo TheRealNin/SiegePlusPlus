@@ -61,9 +61,9 @@ end
 kMarineComBrainActions =
 {
     CreateBuildNearStationAction( kTechId.ArmsLab        , "ArmsLab"        , 1 , 9.1) ,
-    CreateBuildNearStationAction( kTechId.ArmsLab        , "ArmsLab"        , 2 , 1.0) ,
     CreateBuildNearStationAction( kTechId.PrototypeLab   , "PrototypeLab"   , 1 , 3) ,
-    CreateBuildNearStationActionLate( kTechId.Observatory    , "Observatory"    , 1 , 1.0, 3) ,
+    CreateBuildNearStationActionLate( kTechId.ArmsLab        , "ArmsLab"        , 2 , 2.0, 3) ,
+    CreateBuildNearStationActionLate( kTechId.Observatory    , "Observatory"    , 1 , 2.0, 3) ,
     CreateBuildNearStationActionLate( kTechId.Armory         , "Armory"         , 1 , 3.0 , 1.5),
     CreateBuildNearStationActionLate( kTechId.PhaseGate      , "PhaseGate"      , 1 , 1, 4) ,
     CreateBuildNearStationActionLate( kTechId.RoboticsFactory, "RoboticsFactory", 1 , 0.1, 5) ,
@@ -203,7 +203,7 @@ kMarineComBrainActions =
                         {0, 10.0},
                         {4, 8.0},
                         {6, 5.0},
-                        {8, 3.0},
+                        {8, 2.0},
                         {16,1.0},
                         })
 
