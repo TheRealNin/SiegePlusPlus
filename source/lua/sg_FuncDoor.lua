@@ -22,7 +22,8 @@ local networkVars =
 }
 
 AddMixinNetworkVars(BaseModelMixin, networkVars)
-AddMixinNetworkVars(ModelMixin, networkVars)
+AddMixinNetworkVars(ClientModelMixin, networkVars)
+--AddMixinNetworkVars(ModelMixin, networkVars)
 AddMixinNetworkVars(ObstacleMixin, networkVars)
 
 -- Entity defined properties:
@@ -96,9 +97,14 @@ function FuncDoor:OnCreate()
     self.mapblip = Vector(self:GetOrigin())
 
     InitMixin(self, BaseModelMixin)
-    InitMixin(self, ModelMixin)
+    InitMixin(self, ClientModelMixin)
+    --InitMixin(self, ModelMixin)
     InitMixin(self, ObstacleMixin)
     InitMixin(self, SignalEmitterMixin)
+
+    self:SetLagCompensated(true)
+    self:SetPhysicsType(PhysicsType.Kinematic)
+    self:SetPhysicsGroup(PhysicsGroup.BigStructuresGroup)
 
     self.emitMessage = ""
 end
@@ -115,6 +121,7 @@ function FuncDoor:OnInitialized()
             Shared.PrecacheModel(self.model)
             self:SetModel(self.model)
 
+            self:SetLagCompensated(true)
             self:SetPhysicsType(PhysicsType.Kinematic)
             self:SetPhysicsGroup(PhysicsGroup.BigStructuresGroup)
 
@@ -209,11 +216,11 @@ end
 function FuncDoor:OnUpdate(deltaTime)
     if Server then
         self:OnUpdatePosition(deltaTime)
-        self:SyncPhysicsModel()
         self:SyncToObstacleMesh()
     elseif Client then
         self:OnUpdateOutline()
     end
+    ScriptActor.OnUpdate(self, deltaTime)
 end
 
 if Server then
@@ -329,6 +336,10 @@ if Client then
 
 end
 
+function FuncDoor:GetCanBeUsed(player, useSuccessTable)
+    useSuccessTable.useSuccess = false    
+end
+
 -- minimap support
 function FuncDoor:OnGetMapBlipInfo()
     local success = true
@@ -344,4 +355,4 @@ function FuncDoor:GetPositionForMinimap()
     return self.mapblip
 end
 
-Shared.LinkClassToMap("FuncDoor", FuncDoor.kMapName, networkVars)
+Shared.LinkClassToMap("FuncDoor", FuncDoor.kMapName, networkVars, true)
