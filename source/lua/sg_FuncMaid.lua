@@ -47,7 +47,7 @@ local function KillAllInMaid(self)
     local hitEntities = GetEntitiesWithMixinWithinRange("Live", origin, radius)
 
     for _, entity in ipairs(hitEntities) do
-        if self:GetIsPointInside(entity:GetOrigin()) then
+        if self:GetIsPointInside(entity:GetOrigin()) and not entity:isa("Weapon") then
             Shared.Message('Maid\'s killing duty for .. ' .. entity:GetClassName())
             KillEntity(self, entity) -- do cleanup
         end
