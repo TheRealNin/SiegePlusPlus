@@ -82,11 +82,25 @@ local function UpgradeHiveAfterTime(techId, weightIfCanDo, time)
             else
                 brain.hiveMemories[techId] = true
             end
-                
+            
             return perform(move)
         end
         return action
     end
+end
+
+local harvesterBuildDist = 15
+local function CreateBuildNearEachHarvester( techId, className, numToBuild, weightIfNotEnough )
+
+    return CreateBuildStructureActionForEach(
+            techId, className,
+            {
+            {-1.0, weightIfNotEnough},
+            {numToBuild-1, weightIfNotEnough},
+            {numToBuild, 0.0}
+            },
+            "Harvester",
+            harvesterBuildDist )
 end
 
 kAlienComBrainActions =
@@ -109,14 +123,19 @@ kAlienComBrainActions =
     CreateUpgradeStructureAction( kTechId.Xenocide       , 1.0 ) ,
     CreateUpgradeStructureAction( kTechId.Spores       , 1.0 ) ,
     CreateUpgradeStructureAction( kTechId.Stab       , 1.0 ) ,
-    CreateUpgradeStructureActionAfterTime( kTechId.OnosEgg       , 0.5, nil, 5 ) ,
+    CreateUpgradeStructureActionAfterTime( kTechId.OnosEgg       , 0.4, nil, 5 ) ,
 
-    CreateUpgradeStructureAction( kTechId.WebTech       , 0.5 ) ,
+    --CreateUpgradeStructureAction( kTechId.WebTech       , 0.5 ) ,
 
-    CreateBuildNearHiveActionWithReqHiveNum( kTechId.Shift , "Shift" , 2 , 0.2, 1 ),
+    CreateBuildNearHiveActionWithReqHiveNum( kTechId.Shift , "Shift" , 2 , 0.1, 1 ),
     CreateBuildNearHiveActionWithReqHiveNum( kTechId.Crag  , "Crag"  , 2 , 0.1, 3 ),
     CreateBuildNearHiveActionWithReqHiveNum( kTechId.Shade , "Shade" , 2 , 0.1, 3 ),
     CreateBuildNearHiveActionWithReqHiveNum( kTechId.Whip  , "Whip"  , 2 , 0.1, 3 ),
+    
+    CreateBuildNearEachHarvester( kTechId.Whip  , "Whip"  , 2 , 0.3),
+    CreateBuildNearEachHarvester( kTechId.Crag  , "Crag"  , 2 , 0.3),
+    CreateBuildNearEachHarvester( kTechId.Shift , "Shift" , 1 , 0.3),
+    CreateBuildNearEachHarvester( kTechId.Shade , "Shade" , 1 , 0.3),
 
     CreateBuildNearHiveAction( kTechId.Veil  , "Veil"  , 1 , 0.1),
     CreateBuildNearHiveAction( kTechId.Shell , "Shell" , 1 , 0.1),
@@ -547,9 +566,8 @@ function CreateAlienComSenses()
 
     -- RPs that are not taken, not necessarily good or on infestation
     s:Add("availResPoints", function(db)
-            -- not working yet
-            --return ResourcePointsWithPathToCC(GetAvailableResourcePoints(), db:Get("hives"))
-            return GetAvailableResourcePoints()
+            return ResourcePointsWithPathToCC(GetAvailableResourcePoints(), db:Get("hives"))
+            --return GetAvailableResourcePoints()
             end)
 
     s:Add("resPointToTake", function(db)

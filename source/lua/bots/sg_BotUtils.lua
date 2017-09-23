@@ -2,31 +2,26 @@
 function ResourcePointsWithPathToCC(list, ccs)
 
     local rps = {}
-    for _,cc in ipairs(ccs) do
-    
-        local origin = cc:GetOrigin()
-        
-        for _,rp in ientitylist(Shared.GetEntitiesWithClassname("ResourcePoint")) do
-        
-            local pathPoints = PointArray()
-            if pointToUse then
+    if #ccs <= 0 then 
+        return rps 
+    end
+    for _,rp in ientitylist(Shared.GetEntitiesWithClassname("ResourcePoint")) do
+        if not rp:GetAttached() then
             
-                local hasPathToPoint = Pathing.GetPathPoints(origin, rp:GetOrigin(), pathPoints)
-                local dist = GetPointDistance(path)
-                local hasNearbyPlayer = false
-                for _, friend in ipairs( GetEntitiesForTeamWithinRange("Player", cc:GetTeamNumber(), rp:GetOrigin(), 5) ) do
-                    if friend:GetIsAlive() then
-                        hasNearbyPlayer = true
-                    end
-                end
-                
-                if hasPathToPoint or hasNearbyPlayer then
-                    if not rp:GetAttached() then
-                        table.insert( rps, rp )
-                    end
+            local dist = GetMinPathDistToEntities(rp, ccs)
+            local hasPathToPoint = (dist ~= nil and dist > 0)
+            local hasNearbyPlayer = false
+            for _, friend in ipairs( GetEntitiesForTeamWithinRange("Player", ccs[1]:GetTeamNumber(), rp:GetOrigin(), 5) ) do
+                if friend:GetIsAlive() then
+                    hasNearbyPlayer = true
                 end
             end
-
+            
+            if hasPathToPoint or hasNearbyPlayer then
+                if not rp:GetAttached() then
+                    table.insert( rps, rp )
+                end
+            end
         end
     end
 
@@ -34,6 +29,7 @@ function ResourcePointsWithPathToCC(list, ccs)
 
 end
 
+-- from ONE entity to MANY entities
 function GetMinPathDistToEntities( fromEnt, toEnts )
 
     local minDist

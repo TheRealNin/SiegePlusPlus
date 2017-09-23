@@ -30,7 +30,8 @@ function CreateBuildStructureActionForEach( techId, className, numExistingToWeig
             perform = function(move)
 
                 -- ultra hack!
-                if (sdb:Get("gameMinutes") > 5) then
+                local team = com:GetTeam()
+                if (sdb:Get("gameMinutes") > 5 or team:GetTeamResources() > 100) then
                     for _,host in ipairs(hosts) do
                         if host:GetIsBuilt() and host:GetIsAlive() then
                             local existingEnts = GetEntitiesForTeamWithinRange( className, com:GetTeamNumber(), host:GetOrigin(), maxDist + 1) -- a little fudge factor

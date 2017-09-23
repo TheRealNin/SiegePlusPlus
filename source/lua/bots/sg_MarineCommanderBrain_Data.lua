@@ -67,7 +67,8 @@ kMarineComBrainActions =
     CreateBuildNearStationActionLate( kTechId.Armory         , "Armory"         , 1 , 3.0 , 1.5),
     CreateBuildNearStationActionLate( kTechId.PhaseGate      , "PhaseGate"      , 1 , 1, 4) ,
     CreateBuildNearStationActionLate( kTechId.RoboticsFactory, "RoboticsFactory", 1 , 0.1, 5) ,
-    CreateBuildNearStationActionLate( kTechId.InfantryPortal , "InfantryPortal" , 4 , 0.2, 5) ,
+    CreateBuildNearStationActionLate( kTechId.ARCRoboticsFactory, "ARCRoboticsFactory", 1 , 0.1, 5) ,
+    CreateBuildNearStationActionLate( kTechId.InfantryPortal , "InfantryPortal" , 4 , 0.2, 4.5) ,
     
     -- todo: Fix this for maps with 2 tech points in marine start
     --CreateBuildNearStationActionLate( kTechId.CommandStation , "CommandStation" , 3 , 0.2, 5) ,
@@ -81,6 +82,8 @@ kMarineComBrainActions =
     -- Upgrades from structures
     CreateUpgradeStructureAction( kTechId.ExosuitTech           , 3.1 ) ,
     CreateUpgradeStructureAction( kTechId.AdvancedArmoryUpgrade , 3.5 ) ,
+    CreateUpgradeStructureAction( kTechId.UpgradeRoboticsFactory , 1.5 ) ,
+    CreateUpgradeStructureAction( kTechId.MAC , 0.5 ) ,
     CreateUpgradeStructureActionLate( kTechId.ShotgunTech           , 1.0 , nil,  4) ,
     CreateUpgradeStructureActionLate( kTechId.JetpackTech           , 2.9 , nil,  4) ,
     CreateUpgradeStructureActionLate( kTechId.MinesTech             , 0.2 , nil,  4) ,
@@ -117,10 +120,14 @@ kMarineComBrainActions =
         if targetTP then
             weight = 2
         end
+        
+        if (sdb:Get("gameMinutes") < 6) then
+            weight = 0
+        end
 
         return { name = name, weight = weight,
             perform = function(move)
-                if (sdb:Get("gameMinutes") < 6.5) then
+                if (sdb:Get("gameMinutes") < 6) then
                     return
                 end
                 if doables[kTechId.CommandStation] and targetTP then
@@ -146,6 +153,7 @@ kMarineComBrainActions =
         local com = bot:GetPlayer()
         local sdb = brain:GetSenses()
         local weight = 0
+        local maxJetpacks = 10
         local team = bot:GetPlayer():GetTeam()
         
         local doables = sdb:Get("doableTechIds")
@@ -153,7 +161,7 @@ kMarineComBrainActions =
             weight = 1.5
         end
         local jetpacks = GetEntitiesForTeam("Jetpack", kMarineTeamType)
-        if #jetpacks > 10 then 
+        if #jetpacks > maxJetpacks then 
             weight = 0
         end
         
@@ -172,13 +180,58 @@ kMarineComBrainActions =
                 end
                 
                 local jetpacks = GetEntitiesForTeam("Jetpack", kMarineTeamType)
-                if #jetpacks > 10 then return end
+                if #jetpacks > maxJetpacks then return end
                 
                 local aroundPos = proto:GetOrigin()
                 
                 local targetPos = GetRandomSpawnForCapsule(0.4, 0.4, aroundPos, 0.01, kArmoryWeaponAttachRange * 0.5, EntityFilterAll(), nil)
                 if targetPos then
                     local sucess = brain:ExecuteTechId(com, kTechId.DropJetpack, targetPos, com, proto:GetId())
+                end
+            end}
+    end,
+    
+    
+    function(bot, brain)
+
+        local name = "dropmachineguns"
+        local com = bot:GetPlayer()
+        local sdb = brain:GetSenses()
+        local weight = 0
+        local maxMgs = 10
+        local team = bot:GetPlayer():GetTeam()
+        
+        local doables = sdb:Get("doableTechIds")
+        if doables[kTechId.DropHeavyMachineGun] then
+            weight = 1.5
+        end
+        local mgs = GetEntitiesForTeam("HeavyMachineGun", kMarineTeamType)
+        if #mgs > maxMgs then 
+            weight = 0
+        end
+        
+        
+        return { name = name, weight = weight,
+            perform = function(move)
+                
+                --if (sdb:Get("gameMinutes") < 5) then
+                --    return
+                --end
+                local aas = GetEntitiesForTeam("AdvancedArmory", kMarineTeamType)
+                if #aas <= 0 then return end
+                local armory = aas[math.random(#aas)]
+                if not armory:GetIsBuilt() or not armory:GetIsAlive() then
+                    return
+                end
+                
+                local mgs = GetEntitiesForTeam("HeavyMachineGun", kMarineTeamType)
+                if #mgs > maxMgs then return end
+                
+                local aroundPos = armory:GetOrigin()
+                
+                local targetPos = GetRandomSpawnForCapsule(0.5, 0.5, aroundPos, 0.01, kArmoryWeaponAttachRange * 0.5, EntityFilterAll(), nil)
+                if targetPos then
+                    local sucess = brain:ExecuteTechId(com, kTechId.DropHeavyMachineGun, targetPos, com, armory:GetId())
                 end
             end}
     end,
@@ -203,8 +256,8 @@ kMarineComBrainActions =
                         {0, 10.0},
                         {4, 8.0},
                         {6, 5.0},
-                        {8, 2.0},
-                        {16,1.0},
+                        {8, 4.0},
+                        {16,3.0},
                         })
 
             end
@@ -213,10 +266,8 @@ kMarineComBrainActions =
         return { name = name, weight = weight,
             perform = function(move)
                 if targetRP ~= nil then
+                    bot.nextRTDrop =  Shared.GetTime() + 2
                     local success = brain:ExecuteTechId( com, kTechId.Extractor, targetRP:GetOrigin(), com )
-                    if success then
-                        bot.nextRTDrop =  Shared.GetTime() + 2
-                    end
                 end
             end}
     end,
@@ -351,9 +402,10 @@ function CreateMarineComSenses()
             end)
 
     s:Add("availResPoints", function(db)
-            return GetAvailableResourcePoints()
+            --return GetAvailableResourcePoints()
+            return ResourcePointsWithPathToCC(GetAvailableResourcePoints(), db:Get("stations"))
             end)
-
+            
     s:Add("numExtractors", function(db)
             return GetNumEntitiesOfType("ResourceTower", kMarineTeamType)
             end)
