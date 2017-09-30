@@ -42,7 +42,7 @@ local function CreateBuildNearHiveActionWithReqHiveNum( techId, className, numTo
     end
 end
 
-local function CreateUpgradeStructureActionAfterTime( techId, weightIfCanDo, existingTechId, time )
+local function CreateUpgradeStructureActionAfterTime( techId, weightIfCanDo, existingTechId, delayTime )
 
     local createUpgradeStructure = CreateUpgradeStructureAction(techId, weightIfCanDo, existingTechId)
     return function (bot, brain)
@@ -50,7 +50,7 @@ local function CreateUpgradeStructureActionAfterTime( techId, weightIfCanDo, exi
 
         local sdb = brain:GetSenses()
         
-        if sdb:Get("gameMinutes") < time then
+        if sdb:Get("gameMinutes") < delayTime then
             action.weight = 0.0
         end
 
@@ -70,6 +70,10 @@ local function UpgradeHiveAfterTime(techId, weightIfCanDo, time)
             action.weight = 0.0
         end
         
+        if brain.hiveMemories and brain.hiveMemories[techId] and brain.hiveMemories[techId] > Shared.GetTime() - kUpgradeHiveResearchTime then
+            action.weight = 0.0
+        end
+        
         local perform = action.perform
         action.perform = function(move)
             
@@ -77,10 +81,10 @@ local function UpgradeHiveAfterTime(techId, weightIfCanDo, time)
                 brain.hiveMemories = {}
             end
             
-            if brain.hiveMemories[techId] then
+            if brain.hiveMemories[techId] and brain.hiveMemories[techId] > Shared.GetTime() - kUpgradeHiveResearchTime then
                 return
             else
-                brain.hiveMemories[techId] = true
+                brain.hiveMemories[techId] = Shared.GetTime()
             end
             
             return perform(move)
@@ -89,7 +93,7 @@ local function UpgradeHiveAfterTime(techId, weightIfCanDo, time)
     end
 end
 
-local harvesterBuildDist = 15
+local harvesterBuildDist = 20
 local function CreateBuildNearEachHarvester( techId, className, numToBuild, weightIfNotEnough )
 
     return CreateBuildStructureActionForEach(
@@ -132,8 +136,8 @@ kAlienComBrainActions =
     CreateBuildNearHiveActionWithReqHiveNum( kTechId.Shade , "Shade" , 2 , 0.1, 3 ),
     CreateBuildNearHiveActionWithReqHiveNum( kTechId.Whip  , "Whip"  , 2 , 0.1, 3 ),
     
-    CreateBuildNearEachHarvester( kTechId.Whip  , "Whip"  , 2 , 0.3),
-    CreateBuildNearEachHarvester( kTechId.Crag  , "Crag"  , 2 , 0.3),
+    CreateBuildNearEachHarvester( kTechId.Whip  , "Whip"  , 1 , 0.1),
+    CreateBuildNearEachHarvester( kTechId.Crag  , "Crag"  , 1 , 0.3),
     CreateBuildNearEachHarvester( kTechId.Shift , "Shift" , 1 , 0.3),
     CreateBuildNearEachHarvester( kTechId.Shade , "Shade" , 1 , 0.3),
 
@@ -342,8 +346,8 @@ kAlienComBrainActions =
     end,
 
     -- Trait upgrades
-    CreateUpgradeStructureActionAfterTime( kTechId.ResearchBioMassOne , 5.0, kTechId.BioMassFive, 1) ,
-    CreateUpgradeStructureActionAfterTime( kTechId.ResearchBioMassTwo , 4.0, kTechId.BioMassFive, 1) ,
+    CreateUpgradeStructureActionAfterTime( kTechId.ResearchBioMassOne , 5.0, nil, 1) ,
+    CreateUpgradeStructureActionAfterTime( kTechId.ResearchBioMassTwo , 4.0, nil, 1) ,
 
     function(bot, brain)
 

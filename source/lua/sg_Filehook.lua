@@ -41,6 +41,10 @@ ModLoader.SetupFileHook( "lua/VotingAddCommanderBots.lua", "lua/sg_VotingAddComm
 ModLoader.SetupFileHook( "lua/bots/BotUtils.lua", "lua/bots/sg_BotUtils.lua" , "post" )
 ModLoader.SetupFileHook( "lua/bots/CommonActions.lua", "lua/bots/sg_CommonActions.lua" , "post" )
 
-
+-- bot replacements :(
 ModLoader.SetupFileHook( "lua/bots/AlienCommanderBrain_Data.lua", "lua/bots/sg_AlienCommanderBrain_Data.lua" , "replace" )
 ModLoader.SetupFileHook( "lua/bots/MarineCommanderBrain_Data.lua", "lua/bots/sg_MarineCommanderBrain_Data.lua" , "replace" )
+ModLoader.SetupFileHook( "lua/bots/MarineBrain_Data.lua", "lua/bots/sg_MarineBrain_Data.lua" , "replace" )
+ModLoader.SetupFileHook( "lua/bots/SkulkBrain_Data.lua", "lua/bots/sg_SkulkBrain_Data.lua" , "replace" )
+ModLoader.SetupFileHook( "lua/bots/GorgeBrain_Data.lua", "lua/bots/sg_GorgeBrain_Data.lua" , "replace" )
+ModLoader.SetupFileHook( "lua/bots/BotMotion.lua", "lua/bots/sg_BotMotion.lua" , "replace" )

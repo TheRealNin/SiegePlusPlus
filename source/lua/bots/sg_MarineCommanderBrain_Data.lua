@@ -44,6 +44,7 @@ local function CreateBuildNearEachPower( techId, className, numToBuild, weightIf
             kPowerPointDist )
 end
 
+
 local function CreateBuildNearEachProto( techId, className, numToBuild, weightIfNotEnough )
 
     return CreateBuildStructureActionForEach(
@@ -58,52 +59,76 @@ local function CreateBuildNearEachProto( techId, className, numToBuild, weightIf
 end
 
 
+local function FortifyFront( techId, className, weightIfNotEnough, dist )
+    local numToBuild = 1
+    return CreateBuildStructureActionNearFurthestPower(
+        techId, className,
+        {
+            {-1.0, weightIfNotEnough},
+            {numToBuild-1, weightIfNotEnough},
+            {numToBuild, 0.0}
+        },
+        dist)
+end
+
+
 kMarineComBrainActions =
 {
     CreateBuildNearStationAction( kTechId.ArmsLab        , "ArmsLab"        , 1 , 9.1) ,
-    CreateBuildNearStationAction( kTechId.PrototypeLab   , "PrototypeLab"   , 1 , 3) ,
+    
+    -- why does the bot commander sometimes think it can't build a proto???
+    CreateBuildNearStationAction( kTechId.PrototypeLab   , "PrototypeLab"   , 1 , 15) ,
     CreateBuildNearStationActionLate( kTechId.ArmsLab        , "ArmsLab"        , 2 , 2.0, 3) ,
     CreateBuildNearStationActionLate( kTechId.Observatory    , "Observatory"    , 1 , 2.0, 3) ,
     CreateBuildNearStationActionLate( kTechId.Armory         , "Armory"         , 1 , 3.0 , 1.5),
-    CreateBuildNearStationActionLate( kTechId.PhaseGate      , "PhaseGate"      , 1 , 1, 4) ,
-    CreateBuildNearStationActionLate( kTechId.RoboticsFactory, "RoboticsFactory", 1 , 0.1, 5) ,
-    CreateBuildNearStationActionLate( kTechId.ARCRoboticsFactory, "ARCRoboticsFactory", 1 , 0.1, 5) ,
-    CreateBuildNearStationActionLate( kTechId.InfantryPortal , "InfantryPortal" , 4 , 0.2, 4.5) ,
-    
-    -- todo: Fix this for maps with 2 tech points in marine start
-    --CreateBuildNearStationActionLate( kTechId.CommandStation , "CommandStation" , 3 , 0.2, 5) ,
+    CreateBuildNearStationActionLate( kTechId.PhaseGate      , "PhaseGate"      , 1 , 3.0, 4) ,
+    CreateBuildNearStationActionLate( kTechId.InfantryPortal , "InfantryPortal" , 4 , 0.2, 5.5) ,
     
     
-    CreateBuildNearEachPower( kTechId.Armory         , "Armory"         , 1 , 0.2 ),
-    CreateBuildNearEachPower( kTechId.PhaseGate      , "PhaseGate"      , 1 , 0.3 ),
-    CreateBuildNearEachPower( kTechId.PrototypeLab   , "PrototypeLab"   , 1 , 0.1 ),
+    CreateBuildNearEachPower( kTechId.PhaseGate      , "PhaseGate"      , 1 , 0.2 ),
     CreateBuildNearEachPower( kTechId.Observatory    , "Observatory"    , 1 , 0.1 ),
 
+    FortifyFront( kTechId.PrototypeLab   , "PrototypeLab"   , 2.2 , 6 ),
+    FortifyFront( kTechId.Armory         , "Armory"         , 2   , 6 ),
+    FortifyFront( kTechId.PhaseGate      , "PhaseGate"      , 2   , 6 ),
+    
+    
     -- Upgrades from structures
-    CreateUpgradeStructureAction( kTechId.ExosuitTech           , 3.1 ) ,
-    CreateUpgradeStructureAction( kTechId.AdvancedArmoryUpgrade , 3.5 ) ,
-    CreateUpgradeStructureAction( kTechId.UpgradeRoboticsFactory , 1.5 ) ,
-    CreateUpgradeStructureAction( kTechId.MAC , 0.5 ) ,
-    CreateUpgradeStructureActionLate( kTechId.ShotgunTech           , 1.0 , nil,  4) ,
+    CreateUpgradeStructureAction( kTechId.ExosuitTech           , 5.1 ) ,
+    CreateUpgradeStructureAction( kTechId.AdvancedArmoryUpgrade , 3.5, kTechId.AdvancedArmory) ,
+    
+    CreateBuildNearStationActionLate( kTechId.RoboticsFactory, "RoboticsFactory", 1 , 0.1, 7) ,
+    CreateUpgradeStructureActionLate( kTechId.UpgradeRoboticsFactory , 1.5 , nil, 7.5) ,
+    CreateUpgradeStructureActionLate( kTechId.MAC , 0.1 , nil, 8 ) ,
+    CreateUpgradeStructureActionLate( kTechId.ARC , 0.3 , nil, 9 ) , 
+    
+    -- this is a hack lol
+    CreateUpgradeStructureAction( kTechId.ARCDeploy , 4.0),
+    
+    CreateUpgradeStructureActionLate( kTechId.ShotgunTech           , 1.0 , nil,  6) ,
     CreateUpgradeStructureActionLate( kTechId.JetpackTech           , 2.9 , nil,  4) ,
     CreateUpgradeStructureActionLate( kTechId.MinesTech             , 0.2 , nil,  4) ,
     CreateUpgradeStructureActionLate( kTechId.HeavyMachineGunTech   , 1.1 , nil,  4) ,
-    CreateUpgradeStructureActionLate( kTechId.GrenadeTech           , 0.3 , nil,  4) ,
+    CreateUpgradeStructureActionLate( kTechId.GrenadeTech           , 0.3 , nil,  6) ,
     
 
     CreateUpgradeStructureAction( kTechId.PhaseTech , 2.0),
+    
 
     CreateUpgradeStructureAction( kTechId.Weapons1 , 5.0 ) ,
     CreateUpgradeStructureAction( kTechId.Weapons2 , 4.0 ) ,
-    CreateUpgradeStructureAction( kTechId.Weapons3 , 2.5 ) ,
+    CreateUpgradeStructureAction( kTechId.Weapons3 , 3.0 ) ,
     CreateUpgradeStructureAction( kTechId.Armor1   , 5.0 ) ,
     CreateUpgradeStructureAction( kTechId.Armor2   , 4.0 ) ,
-    CreateUpgradeStructureAction( kTechId.Armor3   , 2.5 ) ,
+    CreateUpgradeStructureAction( kTechId.Armor3   , 3.0 ) ,
+    
+    -- this doesn't actually upgrade
+    CreateUpgradeStructureAction( kTechId.SocketPowerNode, 1.0 ) ,
     
     -- for some reason the bot can't do this. I don't know why!
-    --CreateUpgradeStructureAction( kTechId.PowerSurgeTech , 0.2 ),
-    --CreateUpgradeStructureAction( kTechId.CatPackTech    , 0.2 ),
-    --CreateUpgradeStructureAction( kTechId.NanoShieldTech , 0.2 ),
+    CreateUpgradeStructureActionLate( kTechId.PowerSurgeTech , 0.3, nil, 7 ),
+    CreateUpgradeStructureActionLate( kTechId.CatPackTech    , 0.3, nil, 7 ),
+    CreateUpgradeStructureActionLate( kTechId.NanoShieldTech , 0.3, nil, 7 ),
 
     function(bot, brain)
 
@@ -127,14 +152,13 @@ kMarineComBrainActions =
 
         return { name = name, weight = weight,
             perform = function(move)
-                if (sdb:Get("gameMinutes") < 6) then
-                    return
-                end
                 if doables[kTechId.CommandStation] and targetTP then
                     local sucess = brain:ExecuteTechId( com, kTechId.CommandStation, targetTP:GetOrigin(), com )
                 end
             end}
     end,
+    
+    
     function(bot, brain)
 
         local weight = 0
@@ -158,13 +182,21 @@ kMarineComBrainActions =
         
         local doables = sdb:Get("doableTechIds")
         if doables[kTechId.DropJetpack] then
-            weight = 1.5
+            weight = 0.2
         end
         local jetpacks = GetEntitiesForTeam("Jetpack", kMarineTeamType)
         if #jetpacks > maxJetpacks then 
             weight = 0
         end
         
+        local protoLabs = GetEntitiesForTeam("PrototypeLab", kMarineTeamType)
+        if #protoLabs <= 0 then 
+            weight = 0
+        end
+        local proto = protoLabs[math.random(#protoLabs)]
+        if not proto or not proto:GetIsBuilt() or not proto:GetIsAlive() then
+            weight = 0
+        end
         
         return { name = name, weight = weight,
             perform = function(move)
@@ -172,16 +204,6 @@ kMarineComBrainActions =
                 --if (sdb:Get("gameMinutes") < 5) then
                 --    return
                 --end
-                local protoLabs = GetEntitiesForTeam("PrototypeLab", kMarineTeamType)
-                if #protoLabs <= 0 then return end
-                local proto = protoLabs[math.random(#protoLabs)]
-                if not proto:GetIsBuilt() or not proto:GetIsAlive() then
-                    return
-                end
-                
-                local jetpacks = GetEntitiesForTeam("Jetpack", kMarineTeamType)
-                if #jetpacks > maxJetpacks then return end
-                
                 local aroundPos = proto:GetOrigin()
                 
                 local targetPos = GetRandomSpawnForCapsule(0.4, 0.4, aroundPos, 0.01, kArmoryWeaponAttachRange * 0.5, EntityFilterAll(), nil)
@@ -203,29 +225,26 @@ kMarineComBrainActions =
         
         local doables = sdb:Get("doableTechIds")
         if doables[kTechId.DropHeavyMachineGun] then
-            weight = 1.5
+            if (sdb:Get("gameMinutes") > 5) then
+                weight = 0.2
+            end
         end
         local mgs = GetEntitiesForTeam("HeavyMachineGun", kMarineTeamType)
         if #mgs > maxMgs then 
             weight = 0
         end
         
+        local aas = GetEntitiesForTeam("AdvancedArmory", kMarineTeamType)
+        if #aas <= 0 then 
+            weight = 0
+        end
+        local armory = aas[math.random(#aas)]
+        if not armory or not armory:GetIsBuilt() or not armory:GetIsAlive() then
+            weight = 0
+        end
         
         return { name = name, weight = weight,
             perform = function(move)
-                
-                --if (sdb:Get("gameMinutes") < 5) then
-                --    return
-                --end
-                local aas = GetEntitiesForTeam("AdvancedArmory", kMarineTeamType)
-                if #aas <= 0 then return end
-                local armory = aas[math.random(#aas)]
-                if not armory:GetIsBuilt() or not armory:GetIsAlive() then
-                    return
-                end
-                
-                local mgs = GetEntitiesForTeam("HeavyMachineGun", kMarineTeamType)
-                if #mgs > maxMgs then return end
                 
                 local aroundPos = armory:GetOrigin()
                 
@@ -267,6 +286,34 @@ kMarineComBrainActions =
             perform = function(move)
                 if targetRP ~= nil then
                     bot.nextRTDrop =  Shared.GetTime() + 2
+                    local success = brain:ExecuteTechId( com, kTechId.Extractor, targetRP:GetOrigin(), com )
+                end
+            end}
+    end,
+    
+    
+    function(bot, brain)
+
+        local name = "buildWall"
+        local com = bot:GetPlayer()
+        local sdb = brain:GetSenses()
+        local doables = sdb:Get("doableTechIds")
+        local weight = 0.0
+        local targetRP
+
+        if doables[kTechId.Armory] and 
+            (sdb:Get("gameMinutes") > 5 or (not bot.nextWallDrop or bot.nextWallDrop < Shared.GetTime())) then
+
+            targetPos = sdb:Get("wallPosition")
+
+            weight = 0
+
+        end
+
+        return { name = name, weight = weight,
+            perform = function(move)
+                if targetRP ~= nil then
+                    bot.nextWallDrop =  Shared.GetTime() + 4
                     local success = brain:ExecuteTechId( com, kTechId.Extractor, targetRP:GetOrigin(), com )
                 end
             end}
@@ -370,6 +417,27 @@ kMarineComBrainActions =
     
 
     function(bot, brain)
+        local name = "arcs"
+        local com = bot:GetPlayer()
+        local sdb = brain:GetSenses()
+        local doables = sdb:Get("doableTechIds")
+        local weight = 0.0
+        local arcs = sdb:Get("arcs")
+
+        for _, arc in ipairs(arcs) do
+            if not arc:GetHasOrder() then
+                
+                
+            end
+        end
+
+        return { name = name, weight = weight,
+            perform = function(move)
+            
+            end}
+    end,
+    
+    function(bot, brain)
 
         return { name = "idle", weight = 1e-5,
             perform = function(move)
@@ -400,7 +468,32 @@ function CreateMarineComSenses()
     s:Add("stations", function(db)
             return GetEntitiesForTeam("CommandStation", kMarineTeamType)
             end)
-
+            
+    s:Add("powernodes", function(db)
+            local builtPowernodes = {}
+            local allPowernodes = GetEntitiesForTeam("PowerPoint", kMarineTeamType)
+            for _, pn in ipairs(allPowernodes) do
+                
+                if pn:GetIsBuilt() and pn:GetIsAlive() then
+                    table.insert(builtPowernodes, pn)
+                end
+            end
+            
+            return builtPowernodes
+            end)
+     
+    s:Add("wallPosition", function(db)
+            local fortify = db:Get("powerNodeToFortify")
+            if fortify then
+            
+            end
+            return nil
+            end)
+            
+    s:Add("arcs", function(db)
+            return GetEntitiesForTeam("ARC", kMarineTeamType)
+            end)
+            
     s:Add("availResPoints", function(db)
             --return GetAvailableResourcePoints()
             return ResourcePointsWithPathToCC(GetAvailableResourcePoints(), db:Get("stations"))
@@ -423,6 +516,15 @@ function CreateMarineComSenses()
             return tp
             end)
 
+    s:Add("powerNodeToFortify", function(db)
+        local powernodes = db:Get("powernodes")
+        local stations = db:Get("stations")
+        local dist, power = GetMaxTableEntry( powernodes, function(power)
+            return GetMaxPathDistToEntities( power, stations )
+            end)
+        return power
+        end)
+            
     s:Add("resPointToTake", function(db)
             local rps = db:Get("availResPoints")
             local stations = db:Get("stations")

@@ -50,3 +50,26 @@ function GetMinPathDistToEntities( fromEnt, toEnts )
     return minDist
 
 end
+
+
+-- from ONE entity to MANY entities
+function GetMaxPathDistToEntities( fromEnt, toEnts )
+
+    local maxDist = 0
+    local fromPos = fromEnt:GetOrigin()
+
+    for _,toEnt in ipairs(toEnts) do
+        
+        local path = PointArray()
+        local validPath = Pathing.GetPathPoints(fromPos, toEnt:GetOrigin(), path)
+        local dist = GetPointDistance(path)
+
+        if validPath and (not maxDist or dist > maxDist) then
+            
+            maxDist = dist
+        end
+    end
+
+    return maxDist
+
+end
