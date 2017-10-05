@@ -118,7 +118,7 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
     local doFire = false
 
     -- Avoid doing expensive vis check if we are too far
-    local hasClearShot = dist < 20.0 and bot:GetBotCanSeeTarget( target )
+    local hasClearShot = dist < 30.0 and bot:GetBotCanSeeTarget( target )
 
     if not hasClearShot then
 

@@ -71,6 +71,108 @@ local function FortifyFront( techId, className, weightIfNotEnough, dist )
         dist)
 end
 
+local function GetPathToEnemyHive(origin)
+    local hives = GetEntitiesForTeam("Hive", kAlienTeamType)
+    if #hives<=0 then
+        return nil
+    end
+    local hive = hives[math.random(#hives)]
+    local pathPoints = PointArray()
+    local reachable = Pathing.GetPathPoints(origin, hive, pathPoints)
+    if not reachable or #pathPoints<=0 then
+        return nil
+    end
+    return pathPoints
+end
+local wallTestDirs = {
+    Vector(1,0,0),
+    Vector(1,0,1),
+    Vector(0,0,1),
+    Vector(-1,0,1)
+}
+local testMax = 10
+local function GetSmallestWallPoints(pathPoints)
+    local leftSide, rightSide
+    local minDist
+    for _, point in ipairs(pathPoints) do
+        for __, dir in wallTestDirs do
+            local startPoint = point
+            local endPoint  = point + dir * testMax
+            local endPoint2 = point - dir * testMax
+            local trace  = Shared.TraceRay(startPoint, endPoint, CollisionRep.Move, PhysicsMask.All, EntityFilterAll())
+            local trace2 = Shared.TraceRay(startPoint, endPoint2,CollisionRep.Move, PhysicsMask.All, EntityFilterAll())
+            if trace.fraction  > 0.05 and trace.fraction  <= 1 and 
+               trace2.fraction > 0.05 and trace2.fraction <= 1 then
+                local dist = (trace.endPoint - trace2.endPoint):GetLength()
+                if not minDist or minDist > dist then
+                    minDist = dist
+                    leftSide = trace.endPoint
+                    rightSide = trace.endPoint
+                end
+            end
+        end
+    end
+    return leftSide, rightSide
+end
+local function GetTestablePoints(startPoint, pathPoints, maxPathDist)
+    local splitPoints = SplitPathPoints(startPoint, pathPoints, 2)
+    
+    local newPoints = {}
+    
+    for index, point in ipairs(splitPoints) do
+        if index > maxPathDist then
+            break
+        end
+        table.insert(newPoints, point)
+    end
+    return newPoints
+end
+
+local function GetArmoryWallPosition(startOrigin)
+    local pathToHive = GetPathToEnemyHive(startOrigin)
+    if pathToHive then
+        local testablePoints = GetTestablePoints(startOrigin, pathToHive, 15)
+        local leftSide, rightSide = GetSmallestWallPoints(testablePoints)
+        if leftSide ~= nil and rightSide ~= nil then
+            return (leftSide + rightSide)*0.5
+        end
+    end
+    return Vector(0,0,0)
+end
+
+
+
+local function GetIsWeldedByOtherMAC(self, target)
+
+    if target then
+    
+        for _, mac in ipairs(GetEntitiesForTeam("MAC", self:GetTeamNumber())) do
+        
+            if self ~= mac then
+            
+                if mac.secondaryTargetId ~= nil and Shared.GetEntity(mac.secondaryTargetId) == target then
+                    return true
+                end
+                
+                local currentOrder = mac:GetCurrentOrder()
+                local orderTarget = nil
+                if currentOrder and currentOrder:GetParam() ~= nil then
+                    orderTarget = Shared.GetEntity(currentOrder:GetParam())
+                end
+                
+                if currentOrder and orderTarget == target and (currentOrder:GetType() == kTechId.FollowAndWeld or currentOrder:GetType() == kTechId.Weld or currentOrder:GetType() == kTechId.AutoWeld) then
+                    return true
+                end
+                
+            end
+            
+        end
+        
+    end
+    
+    return false
+    
+end
 
 kMarineComBrainActions =
 {
@@ -91,19 +193,15 @@ kMarineComBrainActions =
     FortifyFront( kTechId.PrototypeLab   , "PrototypeLab"   , 2.2 , 6 ),
     FortifyFront( kTechId.Armory         , "Armory"         , 2   , 6 ),
     FortifyFront( kTechId.PhaseGate      , "PhaseGate"      , 2   , 6 ),
+    FortifyFront( kTechId.RoboticsFactory, "RoboticsFactory", 1   , 6 ),
     
     
     -- Upgrades from structures
     CreateUpgradeStructureAction( kTechId.ExosuitTech           , 5.1 ) ,
     CreateUpgradeStructureAction( kTechId.AdvancedArmoryUpgrade , 3.5, kTechId.AdvancedArmory) ,
     
-    CreateBuildNearStationActionLate( kTechId.RoboticsFactory, "RoboticsFactory", 1 , 0.1, 7) ,
-    CreateUpgradeStructureActionLate( kTechId.UpgradeRoboticsFactory , 1.5 , nil, 7.5) ,
-    CreateUpgradeStructureActionLate( kTechId.MAC , 0.1 , nil, 8 ) ,
-    CreateUpgradeStructureActionLate( kTechId.ARC , 0.3 , nil, 9 ) , 
-    
-    -- this is a hack lol
-    CreateUpgradeStructureAction( kTechId.ARCDeploy , 4.0),
+    CreateBuildNearStationActionLate( kTechId.RoboticsFactory, "RoboticsFactory", 1 , 0.2, 5) ,
+    CreateUpgradeStructureActionLate( kTechId.UpgradeRoboticsFactory , 1.5 , nil, 6) ,
     
     CreateUpgradeStructureActionLate( kTechId.ShotgunTech           , 1.0 , nil,  6) ,
     CreateUpgradeStructureActionLate( kTechId.JetpackTech           , 2.9 , nil,  4) ,
@@ -122,10 +220,10 @@ kMarineComBrainActions =
     CreateUpgradeStructureAction( kTechId.Armor2   , 4.0 ) ,
     CreateUpgradeStructureAction( kTechId.Armor3   , 3.0 ) ,
     
-    -- this doesn't actually upgrade
+    -- this doesn't actually upgrade, it just sockets everything at the start of the game.
+    -- TODO: Don't socket the node in an inaccessable area.
     CreateUpgradeStructureAction( kTechId.SocketPowerNode, 1.0 ) ,
     
-    -- for some reason the bot can't do this. I don't know why!
     CreateUpgradeStructureActionLate( kTechId.PowerSurgeTech , 0.3, nil, 7 ),
     CreateUpgradeStructureActionLate( kTechId.CatPackTech    , 0.3, nil, 7 ),
     CreateUpgradeStructureActionLate( kTechId.NanoShieldTech , 0.3, nil, 7 ),
@@ -180,11 +278,18 @@ kMarineComBrainActions =
         local maxJetpacks = 10
         local team = bot:GetPlayer():GetTeam()
         
+        local jetpacks = GetEntitiesForTeam("Jetpack", kMarineTeamType)
+        
         local doables = sdb:Get("doableTechIds")
         if doables[kTechId.DropJetpack] then
-            weight = 0.2
+            weight = EvalLPF( #jetpacks,
+                    {
+                    {0, 1.5},
+                    {3, 0.5},
+                    {10,0.0},
+                    })
         end
-        local jetpacks = GetEntitiesForTeam("Jetpack", kMarineTeamType)
+        
         if #jetpacks > maxJetpacks then 
             weight = 0
         end
@@ -223,18 +328,25 @@ kMarineComBrainActions =
         local maxMgs = 10
         local team = bot:GetPlayer():GetTeam()
         
+        local mgs = GetEntitiesForTeam("HeavyMachineGun", kMarineTeamType)
+        
         local doables = sdb:Get("doableTechIds")
         if doables[kTechId.DropHeavyMachineGun] then
-            if (sdb:Get("gameMinutes") > 5) then
-                weight = 0.2
+            if (sdb:Get("gameMinutes") > 5 or team:GetTeamResources() > 120) then
+                weight = EvalLPF( #mgs,
+                    {
+                    {0, 1.5},
+                    {2, 0.2},
+                    {10,0.01},
+                    })
             end
         end
-        local mgs = GetEntitiesForTeam("HeavyMachineGun", kMarineTeamType)
         if #mgs > maxMgs then 
             weight = 0
         end
         
-        local aas = GetEntitiesForTeam("AdvancedArmory", kMarineTeamType)
+        -- TODO: Make sure it's a marine and/or team 1...
+        local aas = GetEntsWithTechId({kTechId.AdvancedArmory})
         if #aas <= 0 then 
             weight = 0
         end
@@ -291,7 +403,7 @@ kMarineComBrainActions =
             end}
     end,
     
-    
+    --[[
     function(bot, brain)
 
         local name = "buildWall"
@@ -318,7 +430,7 @@ kMarineComBrainActions =
                 end
             end}
     end,
-
+]]--
     function(bot, brain)
 
         local name = "droppacks"
@@ -419,21 +531,82 @@ kMarineComBrainActions =
     function(bot, brain)
         local name = "arcs"
         local com = bot:GetPlayer()
+        local team = bot:GetPlayer():GetTeam()
         local sdb = brain:GetSenses()
         local doables = sdb:Get("doableTechIds")
         local weight = 0.0
         local arcs = sdb:Get("arcs")
+        local structures = doables[kTechId.ARC]
 
         for _, arc in ipairs(arcs) do
-            if not arc:GetHasOrder() then
-                
-                
+            if not arc:GetHasOrder() and arc.deployMode == ARC.kDeployMode.Undeployed then
+                arc:GiveOrder(kTechId.ARCDeploy)
             end
+        end
+        
+        -- for some reason the bot comm LOVES building arcs
+        if #arcs < 10 and structures ~= nil then
+            weight = EvalLPF( #arcs,
+                    {
+                    {0, 1.5},
+                    {3, 0.5},
+                    {10,0.0},
+                    })
         end
 
         return { name = name, weight = weight,
             perform = function(move)
             
+                if structures == nil then return end
+                -- choose a random host
+                local host = structures[ math.random(#structures) ]
+                brain:ExecuteTechId( com, kTechId.ARC, Vector(0,0,0), host )
+            end}
+    end,
+    
+    function(bot, brain)
+        local name = "macs"
+        local com = bot:GetPlayer()
+        local team = bot:GetPlayer():GetTeam()
+        local sdb = brain:GetSenses()
+        local doables = sdb:Get("doableTechIds")
+        local weight = 0.0
+        local macs = sdb:Get("macs")
+        local structures = doables[kTechId.MAC]
+        
+        if not brain.lastMacScan or brain.lastMacScan < Shared.GetTime() - 5 then
+            brain.lastMacScan = Shared.GetTime()
+        
+            for _, mac in ipairs(macs) do
+                if not mac:GetHasOrder() then
+                    --mac:GiveOrder(kTechId.ARCDeploy)
+                    local marines = GetEntitiesForTeamWithinRange("Player", com:GetTeamNumber(), mac:GetOrigin(), MAC.kOrderScanRadius * 1.5)
+                    for _, marine in ipairs(marines) do
+                        if not GetIsWeldedByOtherMAC(mac, marine) then
+                            mac:GiveOrder(kTechId.FollowAndWeld, marine:GetId(), marine:GetOrigin(), nil, true, true)
+                        end
+                    end
+                end
+            end
+        end
+        
+        -- for some reason the bot comm LOVES building macs
+        if #macs < 10 and structures ~= nil then
+            weight = EvalLPF( #macs,
+                    {
+                    {0, 1.6},
+                    {3, 0.5},
+                    {10,0.0},
+                    })
+        end
+
+        return { name = name, weight = weight,
+            perform = function(move)
+            
+                if structures == nil then return end
+                -- choose a random host
+                local host = structures[ math.random(#structures) ]
+                brain:ExecuteTechId( com, kTechId.MAC, Vector(0,0,0), host )
             end}
     end,
     
@@ -492,6 +665,10 @@ function CreateMarineComSenses()
             
     s:Add("arcs", function(db)
             return GetEntitiesForTeam("ARC", kMarineTeamType)
+            end)
+            
+    s:Add("macs", function(db)
+            return GetEntitiesForTeam("MAC", kMarineTeamType)
             end)
             
     s:Add("availResPoints", function(db)

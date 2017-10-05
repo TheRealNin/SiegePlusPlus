@@ -59,7 +59,7 @@ local function CreateUpgradeStructureActionAfterTime( techId, weightIfCanDo, exi
 end
 
 local function UpgradeHiveAfterTime(techId, weightIfCanDo, time)
-    local createUpgradeStructure = CreateUpgradeStructureAction(techId, weightIfCanDo, nil)
+    local createUpgradeStructure = CreateUpgradeStructureAction(techId, weightIfCanDo, techId)
     return function (bot, brain)
         local action =  createUpgradeStructure(bot, brain)
 
@@ -81,7 +81,7 @@ local function UpgradeHiveAfterTime(techId, weightIfCanDo, time)
                 brain.hiveMemories = {}
             end
             
-            if brain.hiveMemories[techId] and brain.hiveMemories[techId] > Shared.GetTime() - kUpgradeHiveResearchTime then
+            if brain.hiveMemories[techId] and brain.hiveMemories[techId] < Shared.GetTime() - kUpgradeHiveResearchTime then
                 return
             else
                 brain.hiveMemories[techId] = Shared.GetTime()
@@ -230,12 +230,13 @@ kAlienComBrainActions =
                 if GetIsPointOnInfestation(position) then
                     return 0.0
                 end
+                
+                table.insert(brain.structuresInDanger, position)
 
                 if #GetEntitiesForTeamWithinRange("NutrientMist", teamnumber, position, NutrientMist.kSearchRange) > 1 then
                     return 0.0
                 end
 
-                table.insert(brain.structuresInDanger, position)
 
                 return 5.0
 
@@ -245,12 +246,13 @@ kAlienComBrainActions =
                 if GetIsPointOnInfestation(position) then
                     return 0.0
                 end
+                
+                table.insert(brain.structuresInDanger, 1, position)
 
                 if #GetEntitiesForTeamWithinRange("NutrientMist", teamnumber, position, NutrientMist.kSearchRange) > 1 then
                     return 0.0
                 end
 
-                table.insert(brain.structuresInDanger, 1, position)
 
                 return 6.0
 
