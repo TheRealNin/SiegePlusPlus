@@ -59,7 +59,7 @@ local function CreateUpgradeStructureActionAfterTime( techId, weightIfCanDo, exi
 end
 
 local function UpgradeHiveAfterTime(techId, weightIfCanDo, time)
-    local createUpgradeStructure = CreateUpgradeStructureAction(techId, weightIfCanDo, techId)
+    local createUpgradeStructure = CreateUpgradeStructureAction(techId, weightIfCanDo, nil)
     return function (bot, brain)
         local action =  createUpgradeStructure(bot, brain)
 
@@ -70,7 +70,8 @@ local function UpgradeHiveAfterTime(techId, weightIfCanDo, time)
             action.weight = 0.0
         end
         
-        if brain.hiveMemories and brain.hiveMemories[techId] and brain.hiveMemories[techId] < Shared.GetTime() - kUpgradeHiveResearchTime then
+        if brain.hiveMemories and brain.hiveMemories[techId] and Shared.GetTime() - brain.hiveMemories[techId] < kUpgradeHiveResearchTime then
+            --Log("Tried to make a hive type but currently on timeout, setting weight to 0")
             action.weight = 0.0
         end
         
@@ -81,7 +82,8 @@ local function UpgradeHiveAfterTime(techId, weightIfCanDo, time)
                 brain.hiveMemories = {}
             end
             
-            if brain.hiveMemories[techId] and brain.hiveMemories[techId] < Shared.GetTime() - kUpgradeHiveResearchTime then
+            if brain.hiveMemories[techId] and Shared.GetTime() - brain.hiveMemories[techId] < kUpgradeHiveResearchTime then
+                --Log("Tried to make a hive type but currently on timeout, skipping creation of the new hive type")
                 return
             else
                 brain.hiveMemories[techId] = Shared.GetTime()
@@ -109,7 +111,7 @@ end
 
 kAlienComBrainActions =
 {
-    UpgradeHiveAfterTime( kTechId.UpgradeToCragHive        , 0.8, 5 ) ,
+    UpgradeHiveAfterTime( kTechId.UpgradeToCragHive        , 0.9, 4 ) ,
     UpgradeHiveAfterTime( kTechId.UpgradeToShiftHive       , 1.0, 2 ) ,
     UpgradeHiveAfterTime( kTechId.UpgradeToShadeHive       , 0.9, 4 ) ,
 
@@ -330,7 +332,7 @@ kAlienComBrainActions =
             perform = function(move)
 
                 local extents = GetExtents(kTechId.Cyst)
-                local cystPos = GetRandomSpawnForCapsule(extents.y, extents.x, position + Vector(0,1,0), 1, 4, EntityFilterAll(), GetIsPointOffInfestation)
+                local cystPos = GetRandomSpawnForCapsule(extents.y, extents.x, position + Vector(0,1,0), 1, 3, EntityFilterAll(), GetIsPointOffInfestation)
 
                 if not cystPos then return end
 

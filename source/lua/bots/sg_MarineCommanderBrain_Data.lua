@@ -624,7 +624,7 @@ kMarineComBrainActions =
         
             for _, mac in ipairs(macs) do
                 if not mac:GetHasOrder() then
-                    --mac:GiveOrder(kTechId.ARCDeploy)
+                
                     local marines = GetEntitiesForTeamWithinRange("Player", com:GetTeamNumber(), mac:GetOrigin(), MAC.kOrderScanRadius * 1.5)
                     for _, marine in ipairs(marines) do
                         if not GetIsWeldedByOtherMAC(mac, marine) then
