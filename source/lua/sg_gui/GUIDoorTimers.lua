@@ -75,11 +75,16 @@ function GUIDoorTimers:Update(deltaTime)
     if PlayerUI_GetHasGameStarted() and (gameTime > 0) then
         local front, siege, suddendeath = GetGameInfoEntity():GetSiegeTimes()
         if front > 0 or siege > 0 then
-            text = string.format("Front Door: %s | Siege Door: %s",
+            text = string.format("Front door: %s | Siege door: %s",
                 FormatTimer(front, "OPEN"), FormatTimer(siege, "OPEN"))
         else
-            text = string.format("Sudden Death: %s",
-                FormatTimer(suddendeath, "ACTIVATED"))
+            text = string.format("Sudden death: %s",
+                FormatTimer(suddendeath, "ACTIVATED! Cannot heal or build CC/hive!"))
+                
+            if (suddendeath <= 0) then
+                local percentage = math.abs(math.sin(Shared.GetTime() * 3))
+                self.timers:SetColor(LerpColor(Color(1, 1, 1, 1), Color(1, 0, 0, 1), percentage))
+            end
         end
         self.timers:SetText(text)
         visible = true
