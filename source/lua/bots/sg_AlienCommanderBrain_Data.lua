@@ -70,7 +70,7 @@ local function UpgradeHiveAfterTime(techId, weightIfCanDo, time)
             action.weight = 0.0
         end
         
-        if brain.hiveMemories and brain.hiveMemories[techId] and brain.hiveMemories[techId] > Shared.GetTime() - kUpgradeHiveResearchTime then
+        if brain.hiveMemories and brain.hiveMemories[techId] and brain.hiveMemories[techId] < Shared.GetTime() - kUpgradeHiveResearchTime then
             action.weight = 0.0
         end
         

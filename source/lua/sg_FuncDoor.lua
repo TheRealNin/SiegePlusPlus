@@ -159,7 +159,7 @@ end
 
 function FuncDoor:OnAdjustModelCoords(modelCoords)
     local coords = modelCoords
-    if self.scale and self.scale:GetLength() ~= 0 then
+    if self.scale and self.scale:GetLength() ~= 0 and coords then
         coords.xAxis = coords.xAxis * self.scale.x
         coords.yAxis = coords.yAxis * self.scale.y
         coords.zAxis = coords.zAxis * self.scale.z
@@ -214,13 +214,13 @@ function FuncDoor:SyncToObstacleMesh()
 end
 
 function FuncDoor:OnUpdate(deltaTime)
+    ScriptActor.OnUpdate(self, deltaTime)
     if Server then
         self:OnUpdatePosition(deltaTime)
         self:SyncToObstacleMesh()
     elseif Client then
         self:OnUpdateOutline()
     end
-    ScriptActor.OnUpdate(self, deltaTime)
 end
 
 if Server then

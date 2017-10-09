@@ -1,6 +1,51 @@
  Script.Load("lua/bots/CommonActions.lua")
 Script.Load("lua/bots/BrainSenses.lua")
 
+local function CreateBuildStructureActionNearFurthestPower( techId, className, numExistingToWeightLPF,  maxDist)
+
+    return function(bot, brain)
+
+        local name = "build"..EnumToString( kTechId, techId )
+        local com = bot:GetPlayer()
+        local sdb = brain:GetSenses()
+        local doables = sdb:Get("doableTechIds")
+        local weight = 0.0
+        local coms = doables[techId]
+        local targetPowernode = sdb:Get("powerNodeToFortify")
+
+        
+        if coms ~= nil and #coms > 0 then
+            assert( coms[1] == com )
+
+            -- figure out how many exist already
+            local existingEnts = GetEntitiesForTeamWithinRange( className, com:GetTeamNumber(),targetPowernode:GetOrigin(), maxDist + 1)
+            weight = EvalLPF( #existingEnts, numExistingToWeightLPF )
+        end
+        
+        if not targetPowernode then
+            weight = 0
+        end
+        
+        if (sdb:Get("gameMinutes") < 4) then
+            weight = 0
+        end
+        
+
+
+        return { name = name, weight = weight,
+            perform = function(move)
+                if targetPowernode then
+                    local pos = GetRandomBuildPosition( techId, targetPowernode:GetOrigin(), maxDist )
+                    if pos ~= nil then
+                        brain:ExecuteTechId( com, techId, pos, com )
+                    end
+                end
+            end }
+    end
+
+end
+
+
 local kStationBuildDist = 20.0
 local kPowerPointDist = 30.0
 local kProtoDist = 5.0
