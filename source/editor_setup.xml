@@ -150,7 +150,8 @@
 		<parameter name="pathInclude" type="boolean" label="Pathing Include" help="On will include in NavMesh. Off excludes prop from nav mesh" default="true"/>
         <parameter name="pathWalkable" type="boolean" label="Pathing Walkable" help="On will be walkable in NavMesh. Off makes prop not walkable in nav mesh" default="true"/>
 		<parameter name="collidable" type="boolean" label="Collidable" help="The prop can be collided with" default="true"/>
-       
+		<parameter name="emissivePower" type="boolean" label="Emissive matches power" help="Matches emissiveness with the room power." default="true"/>
+              
     </class>
 	
     <class name="billboard"  placeable="false">
@@ -608,6 +609,8 @@
     <class name="minimap_extents">
     
 	<parent>trigger</parent>
+    
+    <parameter name="useLegacyOverview" type="boolean" label="Legacy Overview Image" help="Maps blips (entity icons) in-game to the minimap using old, incorrect technique that matches up with pre-320 generated overview images." default="false"/>
 
     </class>
 
