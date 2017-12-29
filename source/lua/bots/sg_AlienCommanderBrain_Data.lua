@@ -129,7 +129,7 @@ kAlienComBrainActions =
     CreateUpgradeStructureAction( kTechId.Xenocide       , 1.0 ) ,
     CreateUpgradeStructureAction( kTechId.Spores       , 1.0 ) ,
     CreateUpgradeStructureAction( kTechId.Stab       , 1.0 ) ,
-    CreateUpgradeStructureActionAfterTime( kTechId.OnosEgg       , 0.4, nil, 5 ) ,
+    CreateUpgradeStructureActionAfterTime( kTechId.OnosEgg       , 0.4, nil, 8 ) ,
 
     --CreateUpgradeStructureAction( kTechId.WebTech       , 0.5 ) ,
 
@@ -139,9 +139,9 @@ kAlienComBrainActions =
     CreateBuildNearHiveActionWithReqHiveNum( kTechId.Whip  , "Whip"  , 2 , 0.1, 3 ),
     
     CreateBuildNearEachHarvester( kTechId.Whip  , "Whip"  , 1 , 0.1),
-    CreateBuildNearEachHarvester( kTechId.Crag  , "Crag"  , 1 , 0.3),
-    CreateBuildNearEachHarvester( kTechId.Shift , "Shift" , 1 , 0.3),
-    CreateBuildNearEachHarvester( kTechId.Shade , "Shade" , 1 , 0.3),
+    CreateBuildNearEachHarvester( kTechId.Crag  , "Crag"  , 1 , 0.2),
+    CreateBuildNearEachHarvester( kTechId.Shift , "Shift" , 1 , 0.2),
+    CreateBuildNearEachHarvester( kTechId.Shade , "Shade" , 1 , 0.2),
 
     CreateBuildNearHiveAction( kTechId.Veil  , "Veil"  , 1 , 0.1),
     CreateBuildNearHiveAction( kTechId.Shell , "Shell" , 1 , 0.1),
@@ -332,15 +332,21 @@ kAlienComBrainActions =
             perform = function(move)
 
                 local extents = GetExtents(kTechId.Cyst)
-                local cystPos = GetRandomSpawnForCapsule(extents.y, extents.x, position + Vector(0,1,0), 0.5, 3, EntityFilterAll(), GetIsPointOffInfestation)
+                local cystPos = GetRandomSpawnForCapsule(extents.y, extents.x, position + Vector(0,1.5,0), 0.5, 3, EntityFilterAll(), GetIsPointOffInfestation)
+                if not cystPos then
+                    return
+                end
+                
+                local trace = GetCommanderPickTarget(com, cystPos, true, true, false)
 
-                if not cystPos then return end
+                if trace.fraction ~= 1 then
+                    cystPos = trace.endPoint
+                end
+                
+                local cystPoints, parent, normals, nbExistingCystUsed, existingCyst = GetCystPoints(cystPos, true, com:GetTeamNumber())
 
-                local cystPoints, parent = GetCystPoints(cystPos, false, com:GetTeamNumber())
-
-                if not cystPoints or #cystPoints <= 0 then return end
-                local cost = math.max(0, #cystPoints * kCystCost) + 3 -- wiggle room
-
+                local cost = (#cystPoints - nbExistingCystUsed + 1) * kCystCost
+                
                 local team = com:GetTeam()
                 if cost <= team:GetTeamResources() and (team:GetTeamResources() > 42 or sdb:Get("gameMinutes") < 3) then
                     brain:ExecuteTechId( com, kTechId.Cyst, cystPos, com )
