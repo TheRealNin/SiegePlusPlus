@@ -1019,7 +1019,7 @@ function CreateMarineBrainSenses()
             local dist, target = GetMinTableEntry( targets,
                 function(target)
                     assert( target ~= nil )
-                    if target:GetCanBeWelded() then
+                    if target:GetCanBeWelded(marine) then
                         return marine:GetOrigin():GetDistance( target:GetOrigin() )
                     end
                 end)
