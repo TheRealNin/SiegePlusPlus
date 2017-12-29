@@ -321,7 +321,7 @@ kAlienComBrainActions =
         end
 
         -- there is a res point ready to take, so do not build any more cysts to conserve TRes
-        local cysts = position and GetEntitiesForTeamWithinRange("Cyst", com:GetTeamNumber(), position, kCystRedeployRange) or {}
+        local cysts = position and GetEntitiesForTeamWithinRange("Cyst", com:GetTeamNumber(), position, kInfestationRadius) or {}
         local cyst = #cysts > 0 and cysts[1]
         if (not sdb:Get("resPointToTake") or not rp) and position and (not cyst or not cyst:GetIsActuallyConnected()) then
             weight = 5
@@ -332,14 +332,14 @@ kAlienComBrainActions =
             perform = function(move)
 
                 local extents = GetExtents(kTechId.Cyst)
-                local cystPos = GetRandomSpawnForCapsule(extents.y, extents.x, position + Vector(0,1,0), 1, 3, EntityFilterAll(), GetIsPointOffInfestation)
+                local cystPos = GetRandomSpawnForCapsule(extents.y, extents.x, position + Vector(0,1,0), 0.5, 3, EntityFilterAll(), GetIsPointOffInfestation)
 
                 if not cystPos then return end
 
-                local cystPoints = GetCystPoints(cystPos)
+                local cystPoints, parent = GetCystPoints(cystPos, false, com:GetTeamNumber())
 
-                if not cystPoints then return end
-                local cost = math.max(0, (#cystPoints - 1) * kCystCost) + 3 -- wiggle room
+                if not cystPoints or #cystPoints <= 0 then return end
+                local cost = math.max(0, #cystPoints * kCystCost) + 3 -- wiggle room
 
                 local team = com:GetTeam()
                 if cost <= team:GetTeamResources() and (team:GetTeamResources() > 42 or sdb:Get("gameMinutes") < 3) then
@@ -352,6 +352,7 @@ kAlienComBrainActions =
     -- Trait upgrades
     CreateUpgradeStructureActionAfterTime( kTechId.ResearchBioMassOne , 5.0, nil, 1) ,
     CreateUpgradeStructureActionAfterTime( kTechId.ResearchBioMassTwo , 4.0, nil, 1) ,
+    CreateUpgradeStructureActionAfterTime( kTechId.ResearchBioMassThree , 0.5, nil, 5) ,
 
     function(bot, brain)
 

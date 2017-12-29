@@ -216,6 +216,10 @@ end
 local function PerformUse(marine, target, bot, brain, move)
 
     assert(target)
+    if not target.GetOrigin then
+        return
+    end
+    
     local usePos = target:GetOrigin()
     local dist = GetDistanceToTouch(marine:GetEyePos(), target)
 
@@ -240,6 +244,33 @@ local function PerformUse(marine, target, bot, brain, move)
 
 end
 
+local function PerformWeld(marine, target, bot, brain, move)
+
+    assert(target)
+    
+    local usePos = target:GetOrigin()
+    local dist = GetDistanceToTouch(marine:GetEyePos(), target)
+
+    local hasClearShot = dist < 5 and bot:GetBotCanSeeTarget( target )
+
+    if not hasClearShot then
+        -- cannot see it yet - keep moving
+        PerformMove( marine:GetOrigin(), usePos, bot, brain, move )
+    elseif dist < 1.5 then
+        -- close enough to just PrimaryAttack
+        move.commands = AddMoveCommand( move.commands, Move.PrimaryAttack )
+        bot:GetMotion():SetDesiredViewTarget( target:GetEngagementPoint() )
+        bot:GetMotion():SetDesiredMoveTarget( nil )
+    else
+        -- not close enough - keep moving, but also just do PrimaryAttack to be safe.
+        -- Robo factory still gives us issues
+        move.commands = AddMoveCommand( move.commands, Move.PrimaryAttack )
+        PerformMove( marine:GetOrigin(), usePos, bot, brain, move )
+    end
+
+    brain.teamBrain:AssignBotToEntity( bot, target:GetId() )
+
+end
 
 ------------------------------------------
 --
@@ -248,7 +279,6 @@ local function GetIsUseOrder(order)
     return order:GetType() == kTechId.Construct 
             or order:GetType() == kTechId.AutoConstruct
             or order:GetType() == kTechId.Build
-            or order:GetType() == kTechId.Weld
 end
 
 
@@ -454,8 +484,10 @@ kMarineBrainActions =
         local marine = bot:GetPlayer()
         local sdb = brain:GetSenses()
         local weight = 0.0
+        local weldData = sdb:Get("nearestWeldable")
+        local weldTarget = weldData.target
 
-        if sdb:Get("welder") ~= nil and sdb:Get("nearestWeldable") ~= nil then
+        if sdb:Get("welder") ~= nil and weldTarget ~= nil then
             weight = 0.2
         end
 
@@ -466,9 +498,12 @@ kMarineBrainActions =
                     -- switch to welder
                     marine:SetActiveWeapon( Welder.kMapName, true )
                 else
-                    local target = sdb:Get("nearestWeldable")
-                    assert(target ~= nil)
-                    PerformUse( marine, target, bot, brain , move )
+                    local data = sdb:Get("nearestWeldable")
+                    local target = data.target
+                    if not target then return end
+
+                    PerformWeld( marine, target, bot, brain , move )
+                    -- PerformAttackEntity( marine:GetEyePos(), target, target:GetOrigin(), bot, brain, move )
                 end
 
             end }
@@ -1019,7 +1054,7 @@ function CreateMarineBrainSenses()
             local dist, target = GetMinTableEntry( targets,
                 function(target)
                     assert( target ~= nil )
-                    if target:GetCanBeWelded(marine) then
+                    if target:GetCanBeWelded(marine) and target:GetWeldPercentage() < 1 then
                         return marine:GetOrigin():GetDistance( target:GetOrigin() )
                     end
                 end)
