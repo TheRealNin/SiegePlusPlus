@@ -221,7 +221,7 @@ end
 
 kMarineComBrainActions =
 {
-    CreateBuildNearStationAction( kTechId.ArmsLab        , "ArmsLab"        , 1 , 9.1) ,
+    CreateBuildNearStationAction( kTechId.ArmsLab        , "ArmsLab"        , 1 , 3.1) ,
     
     -- why does the bot commander sometimes think it can't build a proto???
     CreateBuildNearStationAction( kTechId.PrototypeLab   , "PrototypeLab"   , 1 , 15) ,
@@ -286,7 +286,7 @@ kMarineComBrainActions =
         targetTP = sdb:Get("techPointToTake")
 
         if targetTP then
-            weight = 2
+            weight = 1
         end
         
         if (sdb:Get("gameMinutes") < 6) then
@@ -665,6 +665,23 @@ kMarineComBrainActions =
             end}
     end
 }
+
+
+
+-- support Jon's crazy mod
+if table.contains(kTechId, "FlamethrowerTech") then
+
+    table.insert(kMarineComBrainActions, CreateUpgradeStructureAction( kTechId.FlamethrowerTech   , 1.0+math.random() ))
+    
+end
+
+if table.contains(kTechId, "GrenadeLauncherTech") then
+
+    table.insert(kMarineComBrainActions, CreateUpgradeStructureAction( kTechId.GrenadeLauncherTech   , 1.0+math.random() ))
+    
+end
+    
+
 
 ------------------------------------------
 --  Build the senses database
