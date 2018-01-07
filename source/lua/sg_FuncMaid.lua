@@ -22,22 +22,23 @@ local function KillEntity(self, entity)
     end
 end
 
+-- Fetches a list of Entities of the specified Class and kills them.
+local function KillEntitiesByClassname(self, classname)
+    for _, entity in ientitylist(Shared.GetEntitiesWithClassname(classname)) do
+        if self:GetIsPointInside(entity:GetOrigin()) then
+            Shared.Message('Maid\'s cleaning duty for ' .. classname .. ' .. ' .. entity:GetId())
+            KillEntity(self, entity) -- do cleanup
+        end
+    end
+end
+
 local function FuncMaidTriggered(self)
     local front, siege, suddendeath = GetGameInfoEntity():GetSiegeTimes()
     local active = (self.type == 0 and front > 0) or (self.type == 1 and siege > 0)
     if GetGamerules():GetGameStarted() and active then
-        for _, entity in ientitylist(Shared.GetEntitiesWithClassname("Cyst")) do
-            if self:GetIsPointInside(entity:GetOrigin()) then
-                Shared.Message('Maid\'s cleaning duty for cyst .. ' .. entity:GetId())
-                KillEntity(self, entity) -- do cleanup
-            end
-        end
-        for _, entity in ientitylist(Shared.GetEntitiesWithClassname("Contamination")) do
-            if self:GetIsPointInside(entity:GetOrigin()) then
-                Shared.Message('Maid\'s cleaning duty for contamination .. ' .. entity:GetId())
-                KillEntity(self, entity) -- do cleanup
-            end
-        end
+        KillEntitiesByClassname(self, "Cyst")
+        KillEntitiesByClassname(self, "Contamination")
+        KillEntitiesByClassname(self, "TunnelEntrance")
     end
 end
 
