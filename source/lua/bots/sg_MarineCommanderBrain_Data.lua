@@ -572,43 +572,6 @@ kMarineComBrainActions =
             end}
     end,
     
-
-    function(bot, brain)
-        local name = "arcs"
-        local com = bot:GetPlayer()
-        local team = bot:GetPlayer():GetTeam()
-        local sdb = brain:GetSenses()
-        local doables = sdb:Get("doableTechIds")
-        local weight = 0.0
-        local arcs = sdb:Get("arcs")
-        local structures = doables[kTechId.ARC]
-
-        for _, arc in ipairs(arcs) do
-            if not arc:GetHasOrder() and arc.deployMode == ARC.kDeployMode.Undeployed then
-                arc:GiveOrder(kTechId.ARCDeploy)
-            end
-        end
-        
-        -- for some reason the bot comm LOVES building arcs
-        if #arcs < 10 and structures ~= nil then
-            weight = EvalLPF( #arcs,
-                    {
-                    {0, 1.5},
-                    {3, 0.5},
-                    {10,0.0},
-                    })
-        end
-
-        return { name = name, weight = weight,
-            perform = function(move)
-            
-                if structures == nil then return end
-                -- choose a random host
-                local host = structures[ math.random(#structures) ]
-                brain:ExecuteTechId( com, kTechId.ARC, Vector(0,0,0), host )
-            end}
-    end,
-    
     function(bot, brain)
         local name = "macs"
         local com = bot:GetPlayer()
