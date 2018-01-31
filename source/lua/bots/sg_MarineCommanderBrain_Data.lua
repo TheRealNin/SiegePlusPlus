@@ -225,7 +225,7 @@ kMarineComBrainActions =
     
     -- why does the bot commander sometimes think it can't build a proto???
     CreateBuildNearStationAction( kTechId.PrototypeLab   , "PrototypeLab"   , 1 , 15) ,
-    CreateBuildNearStationActionLate( kTechId.ArmsLab        , "ArmsLab"        , 2 , 2.0, 3) ,
+    CreateBuildNearStationActionLate( kTechId.ArmsLab        , "ArmsLab"        , 2 , 2.0, 2) ,
     CreateBuildNearStationActionLate( kTechId.Observatory    , "Observatory"    , 1 , 2.0, 3) ,
     CreateBuildNearStationActionLate( kTechId.Armory         , "Armory"         , 1 , 3.0 , 1.5),
     CreateBuildNearStationActionLate( kTechId.PhaseGate      , "PhaseGate"      , 1 , 3.0, 4) ,
@@ -402,12 +402,13 @@ kMarineComBrainActions =
         
         return { name = name, weight = weight,
             perform = function(move)
-                
-                local aroundPos = armory:GetOrigin()
-                
-                local targetPos = GetRandomSpawnForCapsule(0.5, 0.5, aroundPos, 0.01, kArmoryWeaponAttachRange * 0.5, EntityFilterAll(), nil)
-                if targetPos then
-                    local sucess = brain:ExecuteTechId(com, kTechId.DropHeavyMachineGun, targetPos, com, armory:GetId())
+                if armory then
+                    local aroundPos = armory:GetOrigin()
+                    
+                    local targetPos = GetRandomSpawnForCapsule(0.5, 0.5, aroundPos, 0.01, kArmoryWeaponAttachRange * 0.5, EntityFilterAll(), nil)
+                    if targetPos then
+                        local sucess = brain:ExecuteTechId(com, kTechId.DropHeavyMachineGun, targetPos, com, armory:GetId())
+                    end
                 end
             end}
     end,
@@ -602,8 +603,8 @@ kMarineComBrainActions =
         if #macs < 10 and structures ~= nil then
             weight = EvalLPF( #macs,
                     {
-                    {0, 1.6},
-                    {3, 0.5},
+                    {0, 0.5},
+                    {2, 0.1},
                     {10,0.0},
                     })
         end
@@ -612,9 +613,14 @@ kMarineComBrainActions =
             perform = function(move)
             
                 if structures == nil then return end
-                -- choose a random host
-                local host = structures[ math.random(#structures) ]
-                brain:ExecuteTechId( com, kTechId.MAC, Vector(0,0,0), host )
+                local macs = sdb:Get("macs")
+                if #macs < 10 then
+                    -- choose a random host
+                    local host = structures[ math.random(#structures) ]
+                    if host and host:GetIsAlive() then
+                        brain:ExecuteTechId( com, kTechId.MAC, Vector(0,0,0), host )
+                    end
+                end
             end}
     end,
     

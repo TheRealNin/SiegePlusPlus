@@ -43,7 +43,7 @@ function CreateBuildStructureActionForEach( techId, className, numExistingToWeig
                 if mainHost then
                     if mainHost:GetIsBuilt() and mainHost:GetIsAlive() then
                     
-                        local pos = GetRandomBuildPosition( techId, mainHost:GetOrigin(), maxDist )
+                        local pos = GetRandomBuildPosition( techId, mainHost:GetOrigin() + Vector(math.random() * 10 - 5, math.random() * 10 - 5, math.random() * 10 - 5), maxDist )
                         if pos ~= nil then
                             brain:ExecuteTechId( com, techId, pos, com )
                         end
@@ -174,10 +174,8 @@ function CreateUpgradeStructureAction( techId, weightIfCanDo, existingTechId )
 
             weight = weightIfCanDo
 
-            -- but if we have the upgrade already, halve the weight
-            -- TODO THIS DOES NOT WORK WTFFF
+            -- but if we have the upgrade already, set the weight to 0
             if existingTechId ~= nil then
---                DebugPrint("Checking if %s exists..", EnumToString(kTechId, existingTechId))
                 if GetTechTree(com:GetTeamNumber()):GetHasTech(existingTechId) then
                     DebugPrint("setting weight to 0 for already having %s", name)
                     weight = 0
@@ -193,8 +191,9 @@ function CreateUpgradeStructureAction( techId, weightIfCanDo, existingTechId )
                 if structures == nil then return end
                 -- choose a random host
                 local host = structures[ math.random(#structures) ]
-                brain:ExecuteTechId( com, techId, Vector(0,0,0), host )
-
+                if host then
+                    brain:ExecuteTechId( com, techId, Vector(0,0,0), host )
+                end
             end }
     end
 

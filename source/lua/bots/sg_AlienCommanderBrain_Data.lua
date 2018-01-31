@@ -129,7 +129,7 @@ kAlienComBrainActions =
     CreateUpgradeStructureAction( kTechId.Xenocide       , 1.0 ) ,
     CreateUpgradeStructureAction( kTechId.Spores       , 1.0 ) ,
     CreateUpgradeStructureAction( kTechId.Stab       , 1.0 ) ,
-    CreateUpgradeStructureActionAfterTime( kTechId.OnosEgg       , 0.4, nil, 8 ) ,
+    CreateUpgradeStructureActionAfterTime( kTechId.OnosEgg       , 0.1, nil, 8 ) ,
 
     --CreateUpgradeStructureAction( kTechId.WebTech       , 0.5 ) ,
 
@@ -138,10 +138,10 @@ kAlienComBrainActions =
     CreateBuildNearHiveActionWithReqHiveNum( kTechId.Shade , "Shade" , 2 , 0.1, 3 ),
     CreateBuildNearHiveActionWithReqHiveNum( kTechId.Whip  , "Whip"  , 2 , 0.1, 3 ),
     
-    CreateBuildNearEachHarvester( kTechId.Whip  , "Whip"  , 1 , 0.1),
-    CreateBuildNearEachHarvester( kTechId.Crag  , "Crag"  , 1 , 0.2),
-    CreateBuildNearEachHarvester( kTechId.Shift , "Shift" , 1 , 0.2),
-    CreateBuildNearEachHarvester( kTechId.Shade , "Shade" , 1 , 0.2),
+    CreateBuildNearEachHarvester( kTechId.Whip  , "Whip"  , 1 , 0.3),
+    CreateBuildNearEachHarvester( kTechId.Crag  , "Crag"  , 1 , 0.8),
+    CreateBuildNearEachHarvester( kTechId.Shift , "Shift" , 1 , 0.5),
+    CreateBuildNearEachHarvester( kTechId.Shade , "Shade" , 1 , 0.5),
 
     CreateBuildNearHiveAction( kTechId.Veil  , "Veil"  , 1 , 0.1),
     CreateBuildNearHiveAction( kTechId.Shell , "Shell" , 1 , 0.1),
@@ -479,7 +479,7 @@ kAlienComBrainActions =
             targetTP = sdb:Get("techPointToTake")
 
             if targetTP then
-                weight = 6
+                weight = 5.5
             end
             if sdb:Get("numHives") >= 3 then
                 weight = 0
