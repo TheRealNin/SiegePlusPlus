@@ -18,6 +18,7 @@ ModLoader.SetupFileHook( "lua/ObstacleMixin.lua", "lua/sg_ObstacleMixin.lua" , "
 
 -- Cyst placement will emit signal for all func_maid entites on map ( in range of 1000 )
 ModLoader.SetupFileHook( "lua/Cyst.lua", "lua/sg_Cyst.lua" , "post" )
+ModLoader.SetupFileHook( "lua/DrifterEgg.lua", "lua/sg_DrifterEgg.lua" , "post" )
 ModLoader.SetupFileHook( "lua/CommAbilities/Alien/Contamination.lua", "lua/sg_Contamination.lua" , "post" )
 ModLoader.SetupFileHook( "lua/TunnelEntrance.lua", "lua/sg_TunnelEntrance.lua" , "post" )
 

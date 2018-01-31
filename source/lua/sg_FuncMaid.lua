@@ -39,6 +39,7 @@ local function FuncMaidTriggered(self)
         KillEntitiesByClassname(self, "Cyst")
         KillEntitiesByClassname(self, "Contamination")
         KillEntitiesByClassname(self, "TunnelEntrance")
+        KillEntitiesByClassname(self, "DrifterEgg")
     end
 end
 
