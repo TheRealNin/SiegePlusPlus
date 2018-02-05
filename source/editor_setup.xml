@@ -485,10 +485,11 @@
         <parent>gamerules</parent>
 		
 		<parameter name="roundStartMusic" type="file" filter="sound" label="Round start music" help="Defines the music played when a round starts." default="sound/NS2.fev/round_start" />
-        <parameter name="FrontDoorTime" type="real" default="300.0" label="Front Door Opening Time" help="Siege+ time since round start to open front doors in seconds."/>
+        <parameter name="FrontDoorTime" type="real" default="420.0" label="Front Door Opening Time" help="Siege+ time since round start to open front doors in seconds."/>
         <parameter name="SiegeDoorTime" type="real" default="1200.0" label="Siege Door Opening Time" help="Siege+ time since round start to open siege doors in seconds."/>
-        <parameter name="SuddenDeathTime" type="real" default="1200.0" label="Sudden Death Time" help="Siege+ time since round start when CommanStation and Hive cannot be repaired in seconds."/>
-
+        <parameter name="SuddenDeathTime" type="real" default="1540.0" label="Sudden Death Time" help="Siege+ time since round start when CommanStation and Hive cannot be repaired in seconds."/>
+        <parameter name="RelevancyDistance" type="real" default="45.0" label="Relevancy Distance" help="The distance at which entities can be seen. Increasing this value can have a performance impact!"/>
+        
         <model>
             <file>models/system/editor/gamerules.model</file>
         </model>

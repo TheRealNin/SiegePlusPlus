@@ -22,6 +22,12 @@ function NS2Gamerules:GetSuddenDeathActivated()
     return self:GetGameStarted() and gameLength > self.SuddenDeathTime
 end
 
+local oldOnInitialized = NS2Gamerules.OnInitialized
+function NS2Gamerules:OnInitialized()
+    oldOnInitialized(self)
+    kMaxRelevancyDistance = self.RelevancyDistance or 45
+    Log("Relevancy distance set to " .. kMaxRelevancyDistance)
+end
 
 if Server then
 
