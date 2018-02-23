@@ -134,4 +134,15 @@ if Server then
         self.suddenDeath = false
     end
 
+    -- fix a mysterious NS2 bug
+    function NS2Gamerules:GetCanSpawnImmediately()
+        return not self:GetGameStarted() or Shared.GetCheatsEnabled() or (Shared.GetTime() < (self:GetGameStartTime() + kFreeSpawnTime))
+    end
+
+
+end
+
+-- fix a mysterious NS2 bug
+function NS2Gamerules:GetGameStartTime()
+    return ConditionalValue(self:GetGameStarted(), self.gameStartTime or 0, 0)
 end
