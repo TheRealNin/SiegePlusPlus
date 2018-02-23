@@ -14,7 +14,7 @@ local function CreateBuildStructureActionNearFurthestPower( techId, className, n
         local targetPowernode = sdb:Get("powerNodeToFortify")
 
         
-        if coms ~= nil and #coms > 0 then
+        if targetPowernode and coms ~= nil and #coms > 0 then
             assert( coms[1] == com )
 
             -- figure out how many exist already
@@ -233,7 +233,7 @@ kMarineComBrainActions =
     
     
     CreateBuildNearEachPower( kTechId.PhaseGate      , "PhaseGate"      , 1 , 0.2 ),
-    CreateBuildNearEachPower( kTechId.Observatory    , "Observatory"    , 1 , 0.1 ),
+    CreateBuildNearEachPower( kTechId.Observatory    , "Observatory"    , 1 , 0.5 ),
 
     FortifyFront( kTechId.PrototypeLab   , "PrototypeLab"   , 2.2 , 6 ),
     FortifyFront( kTechId.Armory         , "Armory"         , 2   , 6 ),
@@ -488,7 +488,8 @@ kMarineComBrainActions =
 
         local reactTechIds = {
             [kTechId.MarineAlertNeedAmmo] = kTechId.AmmoPack,
-            [kTechId.MarineAlertNeedMedpack] = kTechId.MedPack
+            [kTechId.MarineAlertNeedMedpack] = kTechId.MedPack,
+            [kTechId.MarineAlertNeedOrder] = kTechId.Observatory
         }
 
         local techCheckFunction = {
@@ -506,7 +507,9 @@ kMarineComBrainActions =
                 return ammoPercentage
             end,
             [kTechId.MarineAlertNeedMedpack] = function(target)
-                return target:GetHealthFraction() end
+                return target:GetHealthFraction() end,
+            [kTechId.MarineAlertNeedOrder] = function(target)
+                return #GetEntitiesForTeamWithinXZRange( "Observatory", com:GetTeamNumber(), target:GetOrigin(), Observatory.kDetectionRange) end,
         }
 
         local weight = 0.0
@@ -561,13 +564,20 @@ kMarineComBrainActions =
         return { name = name, weight = weight,
             perform = function(move)
                 if targetId then
-                    local sucess = brain:ExecuteTechId( com, techId, targetPos, com, targetId )
-                    if sucess then
-                        bot.lastServedDropPack[targetId] = bot.lastServedDropPack[targetId] or {}
-                        local count = bot.lastServedDropPack[targetId].count or 0
+                    if techId == kTechId.Observatory then
+                        local pos = GetRandomBuildPosition( techId, targetPos, 5 )
+                        if pos ~= nil then
+                            brain:ExecuteTechId( com, techId, pos, com )
+                        end
+                    else
+                        local sucess = brain:ExecuteTechId( com, techId, targetPos, com, targetId )
+                        if sucess then
+                            bot.lastServedDropPack[targetId] = bot.lastServedDropPack[targetId] or {}
+                            local count = bot.lastServedDropPack[targetId].count or 0
 
-                        bot.lastServedDropPack[targetId].time = Shared.GetTime()
-                        bot.lastServedDropPack[targetId].count = count + 1
+                            bot.lastServedDropPack[targetId].time = Shared.GetTime()
+                            bot.lastServedDropPack[targetId].count = count + 1
+                        end
                     end
                 end
             end}

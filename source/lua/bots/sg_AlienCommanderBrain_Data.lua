@@ -171,16 +171,16 @@ kAlienComBrainActions =
                 else
                     
                     local hives = sdb:Get("hives")
-                    if GetMinPathDistToEntities( targetRP, hives ) > 0 and GetMinPathDistToEntities( targetRP, hives ) < 45 then
+                    if GetMinPathDistToEntities( targetRP, hives ) > 0 and GetMinPathDistToEntities( targetRP, hives ) < 55 then
                         Log(GetMinPathDistToEntities( targetRP, hives ))
-                        weight = 6
+                        weight = 10
                     else
                         weight = EvalLPF( sdb:Get("numHarvesters"),
                             {
                                 {0, 10},
-                                {1, 8},
-                                {2, 6},
-                                {3, 2}
+                                {10, 8},
+                                {12, 6},
+                                {16, 2}
                             })
                     end
                 end
