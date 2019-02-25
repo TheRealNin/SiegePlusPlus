@@ -5,7 +5,7 @@
 
 -- Exclude these targets from protection (prevent exploits )
 local function CanBeDamaged(target)
-    return target == nil or target:isa("Babbler")
+    return target == nil or target:isa("Babbler") or target:isa("Whip")
 end
 
 -- Truce mode untill front doors are closed

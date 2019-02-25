@@ -25,8 +25,11 @@ end
 local oldOnInitialized = NS2Gamerules.OnInitialized
 function NS2Gamerules:OnInitialized()
     oldOnInitialized(self)
-    kMaxRelevancyDistance = self.RelevancyDistance or 45
-    Log("Relevancy distance set to " .. kMaxRelevancyDistance)
+    kMaxRelevancyDistance = self.RelevancyDistance or 40
+    kPlayingTeamInitialTeamRes = self.StartingTeamRes or kPlayingTeamInitialTeamRes
+    kMarineInitialIndivRes = self.StartingPlayerRes or kMarineInitialIndivRes
+    kAlienInitialIndivRes = self.StartingPlayerRes or kAlienInitialIndivRes
+	
 end
 
 if Server then
@@ -133,16 +136,4 @@ if Server then
         self.siegeDoors = false
         self.suddenDeath = false
     end
-
-    -- fix a mysterious NS2 bug
-    function NS2Gamerules:GetCanSpawnImmediately()
-        return not self:GetGameStarted() or Shared.GetCheatsEnabled() or (Shared.GetTime() < (self:GetGameStartTime() + kFreeSpawnTime))
-    end
-
-
-end
-
--- fix a mysterious NS2 bug
-function NS2Gamerules:GetGameStartTime()
-    return ConditionalValue(self:GetGameStarted(), self.gameStartTime or 0, 0)
 end

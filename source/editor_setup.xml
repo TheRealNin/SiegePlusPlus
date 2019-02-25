@@ -489,6 +489,8 @@
         <parameter name="SiegeDoorTime" type="real" default="1200.0" label="Siege Door Opening Time" help="Siege+ time since round start to open siege doors in seconds."/>
         <parameter name="SuddenDeathTime" type="real" default="1540.0" label="Sudden Death Time" help="Siege+ time since round start when CommanStation and Hive cannot be repaired in seconds."/>
         <parameter name="RelevancyDistance" type="real" default="45.0" label="Relevancy Distance" help="The distance at which entities can be seen. Increasing this value can have a performance impact!"/>
+        <parameter name="StartingTeamRes" type="real" default="60.0" label="Starting Team Res" help="Starting team res. Default 60."/>
+        <parameter name="StartingPlayerRes" type="real" default="15.0" label="Starting Player Res" help="Starting player res. Default 15."/>
         
         <model>
             <file>models/system/editor/gamerules.model</file>
