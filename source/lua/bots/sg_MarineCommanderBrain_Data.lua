@@ -268,10 +268,6 @@ kMarineComBrainActions =
     -- this doesn't actually upgrade, it just sockets everything at the start of the game.
     -- TODO: Don't socket the node in an inaccessable area.
     CreateUpgradeStructureAction( kTechId.SocketPowerNode, 1.0 ) ,
-    
-    CreateUpgradeStructureActionLate( kTechId.PowerSurgeTech , 0.3, nil, 7 ),
-    CreateUpgradeStructureActionLate( kTechId.CatPackTech    , 0.3, nil, 7 ),
-    CreateUpgradeStructureActionLate( kTechId.NanoShieldTech , 0.3, nil, 7 ),
 
     function(bot, brain)
 
